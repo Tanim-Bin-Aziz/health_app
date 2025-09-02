@@ -9,4 +9,21 @@ export const theme = createTheme({
       main: "#666f73",
     },
   },
+  components: {
+    MuiButton: {
+      defaultProps: {
+        variant: "contained",
+      },
+      styleOverrides: {
+        root: {
+          padding: "8px, 24px",
+        },
+      },
+    },
+    MuiContainer: {
+      defaultProps: {
+        maxWidth: "lg",
+      },
+    },
+  },
 });
