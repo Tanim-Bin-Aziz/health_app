@@ -1,18 +1,18 @@
 "use client";
 import { Box, Button, Container, Typography } from "@mui/material";
 import Image from "next/image";
-import assets from "@/assets";
+import assets from "../../../../../public/assets";
 
 const HeroSection = () => {
   return (
     <Container
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", md: "row" }, // ✅ stack on mobile
+        flexDirection: { xs: "column", md: "row" },
         alignItems: "center",
         justifyContent: "space-between",
         gap: { xs: 6, md: 0 },
-        my: { xs: 8, md: 16 }, // ✅ smaller margin for mobile
+        my: { xs: 8, md: 16 },
       }}
     >
       {/* Left Side - Text */}
@@ -23,17 +23,17 @@ const HeroSection = () => {
           textAlign: { xs: "center", md: "left" },
         }}
       >
-        {/* Background Grid (hidden on mobile for simplicity) */}
+        {/* Background Grid */}
         <Box
           sx={{
             position: "absolute",
             width: { xs: "100%", md: "700px" },
             left: { xs: 0, md: "-90px" },
             top: { xs: "-50px", md: "-120px" },
-            opacity: { xs: 0.2, md: 1 }, // ✅ subtle background on mobile
+            opacity: { xs: 0.2, md: 1 },
           }}
         >
-          <Image src={assets.svgs.grid} alt="grid" />
+          <Image src={assets.svgs.grid} alt="grid" width={700} height={700} />
         </Box>
 
         <Typography
@@ -90,7 +90,7 @@ const HeroSection = () => {
           mt: { xs: 4, md: 0 },
         }}
       >
-        {/* Arrow (hidden on small) */}
+        {/* Arrow */}
         <Box
           sx={{
             position: "absolute",
@@ -104,45 +104,57 @@ const HeroSection = () => {
 
         {/* Main Doctors */}
         <Box sx={{ display: "flex", gap: 2 }}>
-          <Box mt={{ xs: 0, md: 4 }}>
+          {/* Doctor 1 */}
+          <Box
+            sx={{
+              position: "relative",
+              width: 200,
+              height: 320,
+              mt: { xs: 0, md: 4 },
+            }}
+          >
             <Image
               src={assets.images.doctor1}
-              width={200}
-              height={320}
               alt="doctor1"
-              style={{ maxWidth: "100%", height: "auto" }}
+              fill
+              style={{ objectFit: "contain" }}
+              sizes="(max-width: 768px) 100vw, 200px"
             />
           </Box>
-          <Box>
+
+          {/* Doctor 2 */}
+          <Box sx={{ position: "relative", width: 200, height: 300 }}>
             <Image
               src={assets.images.doctor2}
-              width={200}
-              height={300}
               alt="doctor2"
-              style={{ maxWidth: "100%", height: "auto" }}
+              fill
+              style={{ objectFit: "contain" }}
+              sizes="(max-width: 768px) 100vw, 200px"
             />
           </Box>
         </Box>
 
-        {/* Floating doctor (hidden on very small screens) */}
+        {/* Floating Doctor */}
         <Box
           sx={{
             position: "absolute",
             top: { xs: "auto", md: "220px" },
             left: { xs: "auto", md: "150px" },
             display: { xs: "none", sm: "block" },
+            width: 200,
+            height: 200,
           }}
         >
           <Image
             src={assets.images.doctor3}
-            width={200}
-            height={200}
             alt="doctor3"
-            style={{ maxWidth: "100%", height: "auto" }}
+            fill
+            style={{ objectFit: "contain" }}
+            sizes="(max-width: 768px) 100vw, 200px"
           />
         </Box>
 
-        {/* Stethoscope (only show on md+) */}
+        {/* Stethoscope */}
         <Box
           sx={{
             position: "absolute",
@@ -150,13 +162,16 @@ const HeroSection = () => {
             right: 0,
             zIndex: -1,
             display: { xs: "none", md: "block" },
+            width: 150,
+            height: 150,
           }}
         >
           <Image
             src={assets.images.stethoscope}
-            width={150}
-            height={150}
             alt="stethoscope"
+            fill
+            style={{ objectFit: "contain" }}
+            sizes="(max-width: 768px) 100vw, 150px"
           />
         </Box>
       </Box>

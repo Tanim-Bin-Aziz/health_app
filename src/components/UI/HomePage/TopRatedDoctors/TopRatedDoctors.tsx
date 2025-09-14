@@ -4,19 +4,33 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardMedia,
   Container,
-  Grid,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import Image from "next/image";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Link from "next/link";
 
+type Doctor = {
+  id: string;
+  name: string;
+  qualification: string;
+  designation: string;
+  address: string;
+  profilePhoto?: string | null; // optional, since API may send "" or null
+};
+
 const TopRatedDoctors = async () => {
-  const res = await fetch("http://localhost:5000/api/v1/doctor?page=1&limit=3");
-  const { data: doctors } = await res.json();
-  //   console.log(doctors);
+  const res = await fetch(
+    "http://localhost:5000/api/v1/doctor?page=1&limit=3",
+    {
+      cache: "no-store",
+    }
+  );
+
+  const { data: doctors }: { data: Doctor[] } = await res.json();
+
   return (
     <Box
       sx={{
@@ -26,6 +40,7 @@ const TopRatedDoctors = async () => {
         clipPath: "polygon(0 0, 100% 25%, 100% 100%, 0 75%)",
       }}
     >
+      {/* Section Header */}
       <Box sx={{ textAlign: "center" }}>
         <Typography variant="h4" component="h1" fontWeight={700}>
           Our Top Rated Doctors
@@ -38,65 +53,67 @@ const TopRatedDoctors = async () => {
         </Typography>
       </Box>
 
+      {/* Doctors Cards */}
       <Container sx={{ margin: "30px auto" }}>
         <Grid container spacing={2}>
-          {doctors.map((doctor: any) => (
-            <Grid item key={doctor.id} md={4}>
-              <Card>
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: 300,
-                    "& img": {
+          {doctors.map((doctor) => {
+            const imgSrc =
+              doctor.profilePhoto && doctor.profilePhoto.trim() !== ""
+                ? doctor.profilePhoto
+                : "/assets/doctor-image1.png";
+
+            return (
+              <Grid item key={doctor.id} md={4} xs={12}>
+                <Card>
+                  <Box
+                    sx={{
                       width: "100%",
-                      height: "100%",
-                      overflow: "hidden",
-                      objectFit: "cover",
-                    },
-                  }}
-                >
-                  <Image
-                    src={doctor.profilePhoto}
-                    alt="doctor"
-                    width={500}
-                    height={100}
-                  />
-                </Box>
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {doctor.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {doctor.qualification}, {doctor.designation}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mt={1}>
-                    <LocationOnIcon /> {doctor.address}
-                  </Typography>
-                </CardContent>
-                <CardActions
-                  sx={{
-                    justifyContent: "space-between",
-                    px: 2,
-                    paddingBottom: "20px",
-                  }}
-                >
-                  <Button>Book Now</Button>
-                  <Button variant="outlined">View Profile</Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+                      height: 300,
+                      position: "relative",
+                    }}
+                  >
+                    <Image
+                      src={imgSrc}
+                      alt={doctor.name || "doctor"}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </Box>
+
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {doctor.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {doctor.qualification}, {doctor.designation}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" mt={1}>
+                      <LocationOnIcon /> {doctor.address}
+                    </Typography>
+                  </CardContent>
+
+                  <CardActions
+                    sx={{
+                      justifyContent: "space-between",
+                      px: 2,
+                      paddingBottom: "20px",
+                    }}
+                  >
+                    <Button>Book Now</Button>
+                    <Button variant="outlined">View Profile</Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
-        <Box
-          sx={{
-            textAlign: "center",
-          }}
-        >
+
+        {/* View All Button */}
+        <Box sx={{ textAlign: "center" }}>
           <Button
             variant="outlined"
-            sx={{
-              marginTop: "20px",
-            }}
+            sx={{ marginTop: "20px" }}
             component={Link}
             href="/doctors"
           >
