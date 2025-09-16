@@ -1,9 +1,10 @@
-'use server';
+"use server";
 
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers";
 
-export const deleteCookies = (keys: string[]) => {
-   keys.forEach((key) => {
-      cookies().delete(key);
-   });
-};
+export async function deleteCookies(keys: string[]) {
+  const store = cookies();
+  for (const key of keys) {
+    store.delete(key);
+  }
+}
