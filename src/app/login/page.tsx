@@ -22,20 +22,58 @@ export const validationSchema = z.object({
 
 const LoginPage = () => {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (values: FieldValues) => {
+    setIsLoading(true);
+    setError(""); // Clear previous errors
+
     try {
       const res = await userLogin(values);
-      if (res?.data?.accessToken) {
-        toast.success(res?.message);
+
+      if (res?.success && res?.data?.accessToken) {
+        toast.success(res?.message || "Login successful!");
         storeUserInfo({ accessToken: res?.data?.accessToken });
         router.push("/dashboard");
       } else {
-        setError(res.message);
+        // Handle unexpected success response format
+        setError("Login failed. Please try again.");
+        toast.error("Login failed. Please try again.");
       }
     } catch (err: any) {
-      console.error(err.message);
+      console.log("Login error details:", err);
+
+      // Extract error message with fallback chain
+      let errorMsg = "Something went wrong!";
+
+      if (err?.response?.data?.message) {
+        errorMsg = err.response.data.message;
+      } else if (err?.response?.data?.errorMessages?.[0]?.message) {
+        errorMsg = err.response.data.errorMessages[0].message;
+      } else if (err?.message) {
+        errorMsg = err.message;
+      }
+
+      // Special handling for common error messages
+      if (errorMsg.toLowerCase().includes("user does not exist")) {
+        errorMsg = "User does not exist. Please check your email address.";
+      } else if (errorMsg.toLowerCase().includes("password")) {
+        errorMsg = "Invalid password. Please try again.";
+      } else if (
+        errorMsg.toLowerCase().includes("network") ||
+        errorMsg.toLowerCase().includes("server")
+      ) {
+        errorMsg = "Unable to connect to server. Please try again later.";
+      }
+
+      setError(errorMsg);
+      toast.error(errorMsg);
+
+      // Auto-clear error after 8 seconds
+      setTimeout(() => setError(""), 8000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,14 +113,16 @@ const LoginPage = () => {
           </Stack>
 
           {error && (
-            <Box>
+            <Box sx={{ mt: 2 }}>
               <Typography
                 sx={{
-                  backgroundColor: "red",
-                  padding: "4px",
-                  borderRadius: "4px",
+                  backgroundColor: "#f44336",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
                   color: "white",
-                  marginTop: "10px",
+                  fontSize: "14px",
+                  border: "1px solid #d32f2f",
+                  boxShadow: "0 2px 4px rgba(244, 67, 54, 0.3)",
                 }}
               >
                 {error}
@@ -106,6 +146,7 @@ const LoginPage = () => {
                     label="Email"
                     type="email"
                     fullWidth={true}
+                    disabled={isLoading}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -114,6 +155,7 @@ const LoginPage = () => {
                     label="Password"
                     type="password"
                     fullWidth={true}
+                    disabled={isLoading}
                   />
                 </Grid>
               </Grid>
@@ -126,6 +168,8 @@ const LoginPage = () => {
                   fontWeight={300}
                   sx={{
                     textDecoration: "underline",
+                    color: isLoading ? "#ccc" : "inherit",
+                    pointerEvents: isLoading ? "none" : "auto",
                   }}
                 >
                   Forgot Password?
@@ -135,28 +179,45 @@ const LoginPage = () => {
               <Button
                 fullWidth
                 type="submit"
+                disabled={isLoading}
                 sx={{
                   mt: 2,
                   py: 1.2,
                   borderRadius: 2,
                   fontWeight: 600,
-                  background:
-                    "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+                  background: isLoading
+                    ? "#ccc"
+                    : "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
                   color: "white",
                   textTransform: "none",
                   "&:hover": {
-                    background:
-                      "linear-gradient(135deg, #5b0eb0 0%, #1f65db 100%)",
-                    boxShadow: "0 0 15px rgba(37,117,252,0.6)",
+                    background: isLoading
+                      ? "#ccc"
+                      : "linear-gradient(135deg, #5b0eb0 0%, #1f65db 100%)",
+                    boxShadow: isLoading
+                      ? "none"
+                      : "0 0 15px rgba(37,117,252,0.6)",
+                  },
+                  "&:disabled": {
+                    color: "white",
+                    cursor: "not-allowed",
                   },
                 }}
               >
-                Login
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
 
               <Typography component="p" fontWeight={300} mt={1}>
                 Don&apos;t have an account?{" "}
-                <Link href="/register">Create an account</Link>
+                <Link
+                  href="/register"
+                  style={{
+                    color: isLoading ? "#ccc" : "inherit",
+                    pointerEvents: isLoading ? "none" : "auto",
+                  }}
+                >
+                  Create an account
+                </Link>
               </Typography>
             </PHForm>
           </Box>
