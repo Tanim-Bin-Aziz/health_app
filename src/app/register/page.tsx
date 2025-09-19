@@ -1,18 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
-import assets from "../../../public/assets";
+import patient from "../../../public/assets/svgs/patient.png";
 import Link from "next/link";
-import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { modifyPayload } from "../../utils/modifyPayload";
 import { registerPatient } from "@/services/actions/registerPatient";
 import { toast } from "sonner";
@@ -53,10 +46,8 @@ const RegisterPage = () => {
 
   const handleRegister = async (values: FieldValues) => {
     const data = modifyPayload(values);
-    // console.log(data);
     try {
       const res = await registerPatient(data);
-      // console.log(res);
       if (res?.data?.id) {
         toast.success(res?.message);
         const result = await userLogin({
@@ -86,10 +77,19 @@ const RegisterPage = () => {
           sx={{
             maxWidth: 600,
             width: "100%",
-            boxShadow: 1,
-            borderRadius: 1,
             p: 4,
             textAlign: "center",
+            borderRadius: 3,
+            background: "rgba(255, 255, 255, 0.15)", // glass effect
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            boxShadow: `
+              0 8px 25px rgba(0, 0, 0, 0.10),    /* bottom */
+              0 -8px 25px rgba(0, 0, 0, 0.10),   /* top */
+              8px 0 25px rgba(0, 0, 0, 0.10),    /* right */
+              -8px 0 25px rgba(0, 0, 0, 0.10)    /* left */
+            `, // 4-side shadow
+            border: "1px solid rgba(255, 255, 255, 0.18)",
           }}
         >
           <Stack
@@ -99,7 +99,7 @@ const RegisterPage = () => {
             }}
           >
             <Box>
-              <Image src={assets.svgs.logo} width={50} height={50} alt="logo" />
+              <Image src={patient} width={120} height={120} alt="logo" />
             </Box>
             <Box>
               <Typography variant="h6" fontWeight={600}>
@@ -153,6 +153,19 @@ const RegisterPage = () => {
               <Button
                 sx={{
                   margin: "10px 0px",
+                  py: 1.2,
+                  fontWeight: 600,
+                  color: "#fff",
+                  background: "linear-gradient(135deg, #667eea, #764ba2)", // gradient
+                  borderRadius: 2,
+                  boxShadow: "0 4px 15px rgba(118, 75, 162, 0.4)", // glow shadow
+                  backdropFilter: "blur(6px)",
+                  WebkitBackdropFilter: "blur(6px)",
+                  textTransform: "none",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #764ba2, #667eea)",
+                    boxShadow: "0 6px 20px rgba(118, 75, 162, 0.6)", // stronger glow
+                  },
                 }}
                 fullWidth={true}
                 type="submit"
