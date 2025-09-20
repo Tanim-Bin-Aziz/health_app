@@ -1,7 +1,9 @@
-import React from "react";
-
-const AppointmentPage = () => {
-  return <div>this is appointment</div>;
+const AppointmentsPage = () => {
+  return (
+    <div>
+      <h1>Appointments Page</h1>
+    </div>
+  );
 };
 
-export default AppointmentPage;
+export default AppointmentsPage;
