@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
 import SpecialtyModal from "./components/SpecialtyModal";
