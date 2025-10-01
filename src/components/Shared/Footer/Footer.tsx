@@ -1,6 +1,10 @@
 import { Box, Container, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import facebookIcon from "../../../../public/assets/landing_page/facebook.png";
+import instagramIcon from "../../../../public/assets/landing_page/instagram.png";
+import twitterIcon from "../../../../public/assets/landing_page/twitter.png";
+import linkedIcon from "../../../../public/assets/landing_page/linkedin.png";
 
 const Footer = () => {
   return (
@@ -17,10 +21,10 @@ const Footer = () => {
         </Stack>
 
         <Stack direction="row" gap={2} justifyContent="center" py={3}>
-          {/* <Image src={} width={30} height={30} alt="facebook" />
-          <Image src={} width={30} height={30} alt="facebook" />
-          <Image src={} width={30} height={30} alt="facebook" />
-          <Image src={} width={30} height={30} alt="facebook" /> */}
+          <Image src={facebookIcon} width={30} height={30} alt="facebook" />
+          <Image src={instagramIcon} width={30} height={30} alt="facebook" />
+          <Image src={twitterIcon} width={30} height={30} alt="facebook" />
+          <Image src={linkedIcon} width={30} height={30} alt="facebook" />
         </Stack>
         {/* <div className="border-b-[1px] border-dashed"></div> */}
         <Box

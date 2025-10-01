@@ -10,8 +10,7 @@ import {
 } from "@/redux/api/doctorApi";
 import PHForm from "@/components/Forms/PHForm";
 import { FieldValues } from "react-hook-form";
-import { Button } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Button, Grid } from "@mui/material";
 import PHInput from "@/components/Forms/PHInput";
 import PHSelectField from "@/components/Forms/PHSelectField";
 import { Gender } from "@/types";
@@ -47,9 +46,7 @@ const validationSchema = z.object({
 const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
   const { data: doctorData, refetch, isSuccess } = useGetDoctorQuery(id);
   const { data: allSpecialties } = useGetAllSpecialtiesQuery(undefined);
-  const [selectedSpecialtiesIds, setSelectedSpecialtiesIds] = useState<
-    string[]
-  >([]);
+  const [selectedSpecialtiesIds, setSelectedSpecialtiesIds] = useState([]);
 
   const [updateDoctor, { isLoading: updating }] = useUpdateDoctorMutation();
 
@@ -57,7 +54,9 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
     if (!isSuccess) return;
 
     setSelectedSpecialtiesIds(
-      doctorData?.doctorSpecialties.map((sp: any) => sp.specialtiesId) || []
+      doctorData?.doctorSpecialties.map((sp: any) => {
+        return sp.specialtiesId;
+      })
     );
   }, [isSuccess]);
 
@@ -66,6 +65,9 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
       specialtiesId,
       isDeleted: false,
     }));
+
+    console.log({ id });
+    // return;
 
     const excludedFields: Array<keyof typeof values> = [
       "email",
@@ -85,13 +87,15 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
     ];
 
     const updatedValues = Object.fromEntries(
-      Object.entries(values).filter(([key]) => !excludedFields.includes(key))
+      Object.entries(values).filter(([key]) => {
+        return !excludedFields.includes(key);
+      })
     );
 
     updatedValues.specialties = specialties;
 
     try {
-      await updateDoctor({ body: updatedValues, id });
+      updateDoctor({ body: updatedValues, id });
       await refetch();
       setOpen(false);
     } catch (error) {
@@ -107,10 +111,10 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
         resolver={zodResolver(validationSchema)}
       >
         <Grid container spacing={2} sx={{ my: 5 }}>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput name="name" label="Name" sx={{ mb: 2 }} fullWidth />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="email"
               type="email"
@@ -119,18 +123,18 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="contactNumber"
-              label="Contact Number"
+              label="Contract Number"
               sx={{ mb: 2 }}
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput name="address" label="Address" sx={{ mb: 2 }} fullWidth />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="registrationNumber"
               label="Registration Number"
@@ -138,7 +142,7 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="experience"
               type="number"
@@ -147,7 +151,7 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHSelectField
               items={Gender}
               name="gender"
@@ -156,16 +160,16 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="apointmentFee"
               type="number"
-              label="Appointment Fee"
+              label="ApointmentFee"
               sx={{ mb: 2 }}
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="qualification"
               label="Qualification"
@@ -173,7 +177,8 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="currentWorkingPlace"
               label="Current Working Place"
@@ -181,7 +186,7 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <PHInput
               name="designation"
               label="Designation"
@@ -189,7 +194,7 @@ const ProfileUpdateModal = ({ open, setOpen, id }: TProps) => {
               fullWidth
             />
           </Grid>
-          <Grid xs={12} sm={12} md={4}>
+          <Grid item xs={12} sm={12} md={4}>
             <MultipleSelectChip
               allSpecialties={allSpecialties}
               selectedIds={selectedSpecialtiesIds}

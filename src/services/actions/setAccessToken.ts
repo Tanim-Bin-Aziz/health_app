@@ -3,11 +3,11 @@
 
 import { cookies } from "next/headers";
 
-import { authKey } from "../../contants/authkey";
+import { authKey } from "@/contants/authkey";
 import { redirect } from "next/navigation";
 
-const setAccessToken = (token: string, option?: any) => {
-  cookies().set(authKey, token);
+const setAccessToken = async (token: string, option?: any) => {
+  (await cookies()).set(authKey, token);
   if (option && option.passwordChangeRequired) {
     redirect("/dashboard/change-password");
   }
