@@ -29,25 +29,25 @@ const PHSelectField = ({
     <Controller
       control={control}
       name={name}
+      defaultValue="" // prevents uncontrolled -> controlled warning
       render={({ field }) => (
         <TextField
           {...field}
-          sx={{
-            ...sx,
-          }}
-          size={size}
           select
           label={label}
+          value={field.value ?? ""} // always defined
           required={required}
           fullWidth={fullWidth}
+          size={size}
           error={isError}
           helperText={
             isError ? (formState.errors[name]?.message as string) : ""
           }
+          sx={{ ...sx }}
         >
-          {items.map((name) => (
-            <MenuItem key={name} value={name}>
-              {name}
+          {items.map((item) => (
+            <MenuItem key={item} value={item}>
+              {item}
             </MenuItem>
           ))}
         </TextField>

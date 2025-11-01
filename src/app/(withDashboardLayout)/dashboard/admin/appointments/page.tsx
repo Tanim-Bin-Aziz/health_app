@@ -1,7 +1,7 @@
 const AppointmentsPage = () => {
   return (
     <div>
-      <h1>Appointments Page</h1>
+      <h1>Appointments</h1>
     </div>
   );
 };

@@ -39,7 +39,7 @@ const SideBar = () => {
             cursor: "pointer",
           }}
         >
-          PH Health Care
+          Next Dent
         </Typography>
       </Stack>
       <List>

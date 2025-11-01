@@ -5,9 +5,7 @@ import Image from "next/image";
 import DoctorScheduleSlots from "../components/DoctorScheduleSlots";
 
 type PropTypes = {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 };
 
 const InfoBoxStyles = {
@@ -15,20 +13,42 @@ const InfoBoxStyles = {
     "linear-gradient(to bottom, rgba(21,134,253,0.3), rgba(255,255,255,1) 100%)",
   width: "100%",
   p: 3,
-  "& h6": {
-    color: "primary.main",
-  },
-  "& p": {
-    color: "secondary.main",
-  },
+  "& h6": { color: "primary.main" },
+  "& p": { color: "secondary.main" },
 };
 
 const DoctorsProfilePage = async ({ params }: PropTypes) => {
-  const res = await fetch(`http://localhost:5000/api/v1/doctor/${params.id}`);
-  const { data: doctor } = await res.json();
+  const { id } = params;
 
-  const specialties = doctor.doctorSpecialties.map(
-    (ds: any) => ds.specialties.title
+  let doctor: any = null;
+
+  try {
+    const res = await fetch(`http://localhost:5000/api/v1/doctor/${id}`, {
+      cache: "no-store",
+    });
+    const json = await res.json();
+    doctor = json?.data ?? null;
+  } catch (error) {
+    console.error("Failed to fetch doctor:", error);
+  }
+
+  if (!doctor) {
+    return (
+      <Container>
+        <Box my={5}>
+          <Typography variant="h4" fontWeight={700} textAlign="center">
+            Doctor Not Found
+          </Typography>
+          <Typography textAlign="center" mt={2}>
+            Sorry, we couldn&apos;t find the doctor you are looking for.
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
+
+  const specialties = (doctor?.doctorSpecialties ?? []).map(
+    (ds: any) => ds?.specialties?.title ?? ""
   );
 
   return (
@@ -50,111 +70,98 @@ const DoctorsProfilePage = async ({ params }: PropTypes) => {
         </Typography>
       </Box>
 
-      <Box>
-        <Box sx={{ my: 10, p: 3, bgcolor: "#f8f8f8" }}>
-          <Stack sx={{ bgcolor: "white", p: 3 }}>
-            <Stack direction="row" gap={3}>
-              <Box sx={{ width: 281, height: 281, bgcolor: "#808080" }}>
+      <Box sx={{ my: 10, p: 3, bgcolor: "#f8f8f8" }}>
+        <Stack sx={{ bgcolor: "white", p: 3 }}>
+          <Stack direction="row" gap={3}>
+            <Box sx={{ width: 281, height: 281, bgcolor: "#808080" }}>
+              {doctor.profilePhoto ? (
                 <Image
-                  src={doctor?.profilePhoto}
+                  src={doctor.profilePhoto}
                   alt="doctor image"
                   width={281}
                   height={281}
-                  style={{
-                    height: "281px",
-                  }}
+                  style={{ height: "281px" }}
                 />
-              </Box>
-              <Stack flex={1}>
-                <Box>
-                  <Typography variant="h6" fontWeight={600}>
-                    {doctor?.name}
-                  </Typography>
-                  <Typography sx={{ my: "2px", color: "secondary.main" }}>
-                    {doctor?.designation}
-                  </Typography>
-                  <Stack direction="row" alignItems="center" gap={2} mt={1}>
-                    <Typography
-                      noWrap
-                      sx={{
-                        maxWidth: "45ch",
-                      }}
-                    >
-                      Specialties in
-                    </Typography>
-                    <Box>
-                      {specialties.map((sp: any) => (
-                        <Chip
-                          key={sp}
-                          label={sp}
-                          color="primary"
-                          sx={{ mr: 1 }}
-                        />
-                      ))}
-                    </Box>
-                  </Stack>
-                </Box>
+              ) : null}
+            </Box>
 
-                <DashedLine />
-                <Box>
-                  <Typography sx={{ my: "2px" }}>Working at</Typography>
-                  <Typography>{doctor?.currentWorkingPlace}</Typography>
-                </Box>
-                <DashedLine />
-                <Box>
-                  <Stack direction="row">
-                    <Typography
-                      fontWeight={"bold"}
-                      // fontSize={20}
-                      sx={{
-                        color: "#141414",
-                      }}
-                    >
-                      Consultation Fee
+            <Stack flex={1}>
+              <Box>
+                <Typography variant="h6" fontWeight={600}>
+                  {doctor.name}
+                </Typography>
+                <Typography sx={{ my: "2px", color: "secondary.main" }}>
+                  {doctor.designation}
+                </Typography>
+                <Stack direction="row" alignItems="center" gap={2} mt={1}>
+                  <Typography noWrap sx={{ maxWidth: "45ch" }}>
+                    Specialties in
+                  </Typography>
+                  <Box>
+                    {specialties.map((sp: string) => (
+                      <Chip
+                        key={sp}
+                        label={sp}
+                        color="primary"
+                        sx={{ mr: 1 }}
+                      />
+                    ))}
+                  </Box>
+                </Stack>
+              </Box>
+
+              <DashedLine />
+
+              <Box>
+                <Typography sx={{ my: "2px" }}>Working at</Typography>
+                <Typography>{doctor.currentWorkingPlace}</Typography>
+              </Box>
+
+              <DashedLine />
+
+              <Box>
+                <Stack direction="row">
+                  <Typography fontWeight="bold" sx={{ color: "#141414" }}>
+                    Consultation Fee
+                  </Typography>
+                  <Stack sx={{ ml: 2 }}>
+                    <Typography>
+                      Taka: {doctor.apointmentFee} (incl. VAT)
                     </Typography>
-                    <Stack
-                      sx={{
-                        ml: 2,
-                      }}
-                    >
-                      <Typography>
-                        Taka : {doctor?.apointmentFee} (incl. Vat)
-                      </Typography>
-                      <Typography>Per consultation</Typography>
-                    </Stack>
+                    <Typography>Per consultation</Typography>
                   </Stack>
-                </Box>
-              </Stack>
-            </Stack>
-            <Stack
-              direction={"row"}
-              gap={3}
-              justifyContent={"space-between"}
-              sx={{
-                my: 4,
-              }}
-            >
-              <Box sx={InfoBoxStyles}>
-                <Typography variant="h6">Total Experience</Typography>
-                <Typography>{doctor?.experience}+ Years</Typography>
-              </Box>
-              <Box sx={InfoBoxStyles}>
-                <Typography variant="h6">Qualification</Typography>
-                <Typography>{doctor?.qualification}</Typography>
-              </Box>
-              <Box sx={InfoBoxStyles}>
-                <Typography variant="h6">Average Rating</Typography>
-                <Typography>{doctor?.averageRating}</Typography>
-              </Box>
-              <Box sx={InfoBoxStyles}>
-                <Typography variant="h6">Contact Number</Typography>
-                <Typography>{doctor?.contactNumber}</Typography>
+                </Stack>
               </Box>
             </Stack>
           </Stack>
-        </Box>
+
+          <Stack
+            direction="row"
+            gap={3}
+            justifyContent="space-between"
+            sx={{ my: 4 }}
+          >
+            <Box sx={InfoBoxStyles}>
+              <Typography variant="h6">Total Experience</Typography>
+              <Typography>{doctor.experience}+ Years</Typography>
+            </Box>
+            <Box sx={InfoBoxStyles}>
+              <Typography variant="h6">Qualification</Typography>
+              <Typography>{doctor.qualification}</Typography>
+            </Box>
+            <Box sx={InfoBoxStyles}>
+              <Typography variant="h6">Average Rating</Typography>
+              <Typography>{doctor.averageRating}</Typography>
+            </Box>
+            <Box sx={InfoBoxStyles}>
+              <Typography variant="h6">Contact Number</Typography>
+              <Typography>{doctor.contactNumber}</Typography>
+            </Box>
+          </Stack>
+        </Stack>
       </Box>
-      <DoctorScheduleSlots id={doctor.id} />
+
+      {doctor.id && <DoctorScheduleSlots id={doctor.id} />}
     </Container>
   );
 };

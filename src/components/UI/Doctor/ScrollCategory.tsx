@@ -21,7 +21,7 @@ const ScrollCategory = ({ specialties }: { specialties: string }) => {
   return (
     <Box sx={{ maxWidth: "100%", bgcolor: "background.paper", mx: "auto" }}>
       <Tabs
-        value={value}
+        value={value || false}
         onChange={handleChange}
         variant="scrollable"
         scrollButtons="auto"
