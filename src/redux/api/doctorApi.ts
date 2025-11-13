@@ -7,12 +7,24 @@ import { IDoctor } from "@/types/doctor";
 export const doctorApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     createDoctor: build.mutation({
-      query: (data) => ({
-        url: "/user/create-doctor",
-        method: "POST",
-        contentType: "multipart/form-data",
-        data,
-      }),
+      query: (data) => {
+        console.log(data);
+        const formData = new FormData();
+
+        // append password
+        formData.append("password", data.password);
+
+        // flatten and append doctor fields
+        Object.keys(data.doctor).forEach((key) => {
+          formData.append(`${key}`, data.doctor[key]);
+        });
+
+        return {
+          url: "/doctor",
+          method: "POST",
+          body: formData, // <-- important
+        };
+      },
       invalidatesTags: [tagTypes.doctor],
     }),
 

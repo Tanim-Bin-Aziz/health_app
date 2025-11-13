@@ -22,6 +22,8 @@ const DoctorModal = ({ open, setOpen }: TProps) => {
     values.doctor.experience = Number(values.doctor.experience);
     values.doctor.apointmentFee = Number(values.doctor.apointmentFee);
     const data = modifyPayload(values);
+    console.log(values);
+    console.log(data);
     try {
       const res = await createDoctor(data).unwrap();
       console.log(res);

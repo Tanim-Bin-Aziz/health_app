@@ -39,7 +39,6 @@ const AdminPatientPage = () => {
   const [filterDate, setFilterDate] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // View patient modal
   const [viewPatient, setViewPatient] = useState<SinglePatient | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
@@ -63,7 +62,6 @@ const AdminPatientPage = () => {
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
 
-      // Assign serial based on order from backend (oldest first)
       const patientsWithSerial = data.data
         .sort(
           (a: any, b: any) =>
@@ -87,7 +85,7 @@ const AdminPatientPage = () => {
     fetchPatients();
   }, []);
 
-  // Filter/search without changing serial numbers
+  // Filter/search
   useEffect(() => {
     let filtered = allPatients;
 
@@ -109,6 +107,7 @@ const AdminPatientPage = () => {
     setPatients(filtered);
   }, [searchTerm, filterDate, allPatients]);
 
+  // Create patient
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -136,7 +135,6 @@ const AdminPatientPage = () => {
 
       const newPatientData = await res.json();
 
-      // Add new patient at the end with fixed serial
       const newPatient: Patient = {
         ...newPatientData.data,
         serial: allPatients.length + 1,
@@ -158,6 +156,7 @@ const AdminPatientPage = () => {
     }
   };
 
+  // View patient
   const handleViewDetails = async (id: string) => {
     try {
       setLoading(true);
@@ -209,7 +208,6 @@ const AdminPatientPage = () => {
         <p style={{ fontWeight: 500 }}>Total Patients: {allPatients.length}</p>
 
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          {/* Search */}
           <input
             type="text"
             placeholder="Search by name or contact"
@@ -226,7 +224,6 @@ const AdminPatientPage = () => {
             }}
           />
 
-          {/* Date Filter */}
           <div style={{ position: "relative", width: "220px" }}>
             {!filterDate && (
               <span
@@ -278,57 +275,72 @@ const AdminPatientPage = () => {
         </div>
       </div>
 
-      {/* Loading/Error */}
       {loading && <p>Loading patients...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Table */}
-      <table
-        border={1}
-        cellPadding={10}
-        style={{ width: "100%", marginTop: "1rem", borderCollapse: "collapse" }}
+      {/* Table with outer rounded border */}
+      <div
+        style={{
+          marginTop: "1rem",
+          borderRadius: "12px",
+          border: "1px solid #ccc",
+          overflow: "hidden",
+        }}
       >
-        <thead style={{ backgroundColor: "#f2f2f2" }}>
-          <tr>
-            <th style={{ textAlign: "center", padding: "8px" }}>Serial</th>
-            <th style={{ padding: "8px" }}>Name</th>
-            <th style={{ padding: "8px" }}>Contact</th>
-            <th style={{ padding: "8px" }}>Email</th>
-            <th style={{ padding: "8px" }}>Created At</th>
-            <th style={{ textAlign: "center", padding: "8px" }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {patients.map((p) => (
-            <tr key={p.id}>
-              <td style={{ textAlign: "center", padding: "8px" }}>
-                {p.serial}
-              </td>
-              <td style={{ padding: "8px 16px" }}>{p.name}</td>
-              <td style={{ padding: "8px 16px" }}>{p.contactNumber}</td>
-              <td style={{ padding: "8px 16px" }}>{p.email}</td>
-              <td style={{ padding: "8px 16px" }}>
-                {formatDateTime(p.createdAt)}
-              </td>
-              <td style={{ textAlign: "center", padding: "8px" }}>
-                <button
-                  onClick={() => handleViewDetails(p.id)}
-                  style={{
-                    padding: "0.3rem 0.6rem",
-                    borderRadius: "6px",
-                    border: "none",
-                    background: "#10b981",
-                    color: "#fff",
-                    cursor: "pointer",
-                  }}
-                >
-                  View Details
-                </button>
-              </td>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+          }}
+        >
+          <thead style={{ backgroundColor: "#f2f2f2" }}>
+            <tr>
+              <th style={{ textAlign: "center", padding: "8px" }}>Serial</th>
+              <th style={{ padding: "8px" }}>Name</th>
+              <th style={{ padding: "8px" }}>Contact</th>
+              <th style={{ padding: "8px" }}>Email</th>
+              <th style={{ padding: "8px" }}>Created At</th>
+              <th style={{ textAlign: "center", padding: "8px" }}>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {patients.map((p, idx) => (
+              <tr
+                key={p.id}
+                style={{
+                  backgroundColor: idx % 2 === 0 ? "#fff" : "rgba(0,0,0,0.03)",
+                  borderBottom: "1px solid #ccc",
+                }}
+              >
+                <td style={{ textAlign: "center", padding: "8px" }}>
+                  {p.serial}
+                </td>
+                <td style={{ padding: "8px 16px" }}>{p.name}</td>
+                <td style={{ padding: "8px 16px" }}>{p.contactNumber}</td>
+                <td style={{ padding: "8px 16px" }}>{p.email}</td>
+                <td style={{ padding: "8px 16px" }}>
+                  {formatDateTime(p.createdAt)}
+                </td>
+                <td style={{ textAlign: "center", padding: "8px" }}>
+                  <button
+                    onClick={() => handleViewDetails(p.id)}
+                    style={{
+                      padding: "0.3rem 0.6rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: "#10b981",
+                      color: "#fff",
+                      cursor: "pointer",
+                    }}
+                  >
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Create Patient Modal */}
       <AnimatePresence>
@@ -362,7 +374,7 @@ const AdminPatientPage = () => {
               exit={{ scale: 0.8, opacity: 0, y: 50 }}
               transition={{ type: "spring", stiffness: 120, damping: 15 }}
               style={{
-                background: "rgba(255,255,255,0.8)",
+                background: "rgba(255,255,255,0.9)",
                 backdropFilter: "blur(12px)",
                 padding: "2rem",
                 borderRadius: "12px",
@@ -370,13 +382,7 @@ const AdminPatientPage = () => {
                 boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
               }}
             >
-              <h2
-                style={{
-                  marginBottom: "1rem",
-                  textAlign: "center",
-                  color: "#111827",
-                }}
-              >
+              <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>
                 Create Patient
               </h2>
 
@@ -532,6 +538,7 @@ const AdminPatientPage = () => {
               initial={{ scale: 0.8, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.8, opacity: 0, y: 50 }}
+              transition={{ type: "spring", stiffness: 120, damping: 15 }}
               style={{
                 background: "rgba(255,255,255,0.95)",
                 padding: "2rem",
