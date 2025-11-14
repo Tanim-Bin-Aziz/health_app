@@ -57,7 +57,7 @@ const Navbar = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: "primary.main" }}>
+    <Box sx={{ bgcolor: "#97DBAE" }}>
       <Container>
         <Stack
           py={2}
@@ -72,7 +72,7 @@ const Navbar = () => {
             fontWeight={600}
             sx={{ color: "#ffffff", textDecoration: "none", cursor: "pointer" }}
           >
-            Dent
+            Next Dent
           </Typography>
 
           {/* Nav Links */}

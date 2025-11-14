@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -53,7 +55,7 @@ export default function InventoryPage() {
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [searchPatient, setSearchPatient] = useState("");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [useQuantity, setUseQuantity] = useState<number>(1);
+  const [useQuantity, setUseQuantity] = useState<number | "">("");
 
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [usageHistory, setUsageHistory] = useState<InventoryUsage[]>([]);
@@ -127,10 +129,16 @@ export default function InventoryPage() {
   // ---------------------- Use Item Submit ----------------------
   const handleUseItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedItem || !selectedDoctor || !selectedPatient || useQuantity < 1)
+    if (
+      !selectedItem ||
+      !selectedDoctor ||
+      !selectedPatient ||
+      !useQuantity ||
+      Number(useQuantity) < 1
+    )
       return;
 
-    if (useQuantity > selectedItem.totalStock) {
+    if (Number(useQuantity) > selectedItem.totalStock) {
       alert(
         `Cannot use more than available stock (${selectedItem.totalStock})`
       );
@@ -148,7 +156,7 @@ export default function InventoryPage() {
           inventoryItemId: selectedItem.id,
           doctorId: selectedDoctor,
           patientId: selectedPatient.id,
-          quantityUsed: useQuantity,
+          quantityUsed: Number(useQuantity),
         }),
       });
       const data = await res.json();
@@ -157,8 +165,8 @@ export default function InventoryPage() {
         setUseModalOpen(false);
         setSelectedPatient(null);
         setSelectedDoctor("");
-        setUseQuantity(1);
-        fetchInventory(); // <-- refresh table stock dynamically
+        setUseQuantity("");
+        fetchInventory();
       } else {
         alert(data.message || "Error using inventory");
       }
@@ -183,335 +191,676 @@ export default function InventoryPage() {
     }
   };
 
+  const formatDateTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const opts: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    return `${d.toLocaleDateString("en-GB", opts)} | ${d
+      .toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .replace(":", ".")}`;
+  };
+
+  // ---------------------- Total Available Meds Value ----------------------
+  const totalAvailableCost = items.reduce(
+    (acc, item) => acc + item.totalStock * item.unitCost,
+    0
+  );
+
+  // ---------------------- Total Usage Cost ----------------------
+  const totalUsageCost = usageHistory.reduce((acc, u) => acc + u.totalCost, 0);
+
   // ---------------------- Render ----------------------
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <motion.div
-        className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl p-6 border border-gray-200"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
+    <div style={{ padding: "1rem" }}>
+      <h1
+        style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.5rem" }}
       >
-        <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
-          🧴 Available Medicine List
-        </h1>
+        🧴 Available Inventory
+      </h1>
 
-        {/* History Button */}
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={fetchHistory}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg transition-all"
-          >
-            View History
-          </button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1rem",
+          flexWrap: "wrap",
+          gap: "0.75rem",
+        }}
+      >
+        <div>
+          <p style={{ fontWeight: 500 }}>Total Items: {items.length}</p>
+          <p style={{ fontWeight: 500 }}>
+            Total Available Value: {totalAvailableCost.toFixed(2)} TK
+          </p>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse rounded-lg overflow-hidden">
-            <thead className="bg-indigo-600 text-white">
-              <tr>
-                <th className="py-3 px-4 text-left">#</th>
-                <th className="py-3 px-4 text-left">Medicine Name</th>
-                <th className="py-3 px-4 text-left">Category</th>
-                <th className="py-3 px-4 text-left">Stock</th>
-                <th className="py-3 px-4 text-left">Unit Cost ($)</th>
-                <th className="py-3 px-4 text-left">Total Cost ($)</th>
-                <th className="py-3 px-4 text-left">Entry Date</th>
-                <th className="py-3 px-4 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, index) => (
-                <tr
-                  key={item.id}
-                  className="border-b hover:bg-indigo-50 transition-all"
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          <input
+            type="text"
+            placeholder="Search medicine by name or category"
+            onChange={(e) => {
+              const q = e.target.value;
+              if (!q) {
+                fetchInventory();
+                return;
+              }
+              const lower = q.toLowerCase();
+              const filtered = items.filter(
+                (it) =>
+                  it.name.toLowerCase().includes(lower) ||
+                  (it.category || "").toLowerCase().includes(lower)
+              );
+              setItems(filtered);
+            }}
+            style={{
+              padding: "0.6rem 1rem",
+              borderRadius: "12px",
+              border: "1px solid #ccc",
+              outline: "none",
+              width: "260px",
+              backdropFilter: "blur(6px)",
+              background: "rgba(255,255,255,0.6)",
+            }}
+          />
+
+          <div style={{ display: "flex", gap: "0.6rem" }}>
+            <button
+              onClick={() => fetchInventory()}
+              style={{
+                padding: "0.6rem 1rem",
+                borderRadius: "12px",
+                border: "none",
+                background: "#6b7280",
+                color: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              Refresh
+            </button>
+
+            <button
+              onClick={() => fetchHistory()}
+              style={{
+                padding: "0.6rem 1rem",
+                borderRadius: "12px",
+                border: "none",
+                background: "#f59e0b",
+                color: "#fff",
+                cursor: "pointer",
+                width: "160px",
+              }}
+            >
+              View History
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ------------------ Inventory Table ------------------ */}
+      <div
+        style={{
+          marginTop: "1rem",
+          borderRadius: "12px",
+          border: "1px solid #ccc",
+          overflow: "hidden",
+        }}
+      >
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead style={{ backgroundColor: "#f2f2f2" }}>
+            <tr>
+              <th style={{ textAlign: "center", padding: "10px" }}>#</th>
+              <th style={{ padding: "10px" }}>Medicine Name</th>
+              <th style={{ padding: "10px" }}>Category</th>
+              <th style={{ padding: "10px" }}>Stock</th>
+              <th style={{ padding: "10px" }}>Unit Cost (TK)</th>
+              <th style={{ padding: "10px" }}>Total Cost (TK)</th>
+              <th style={{ padding: "10px" }}>Entry Date</th>
+              <th style={{ textAlign: "center", padding: "10px" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item, index) => (
+              <tr
+                key={item.id}
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? "#fff" : "rgba(0,0,0,0.03)",
+                  borderBottom: "1px solid #e5e7eb",
+                }}
+              >
+                <td style={{ textAlign: "center", padding: "10px" }}>
+                  {index + 1}
+                </td>
+                <td
+                  style={{
+                    padding: "10px 16px",
+                    fontWeight: 600,
+                    color: "#3730a3",
+                  }}
                 >
-                  <td className="py-3 px-4 font-medium text-gray-700">
-                    {index + 1}
-                  </td>
-                  <td className="py-3 px-4 font-semibold text-indigo-700">
-                    {item.name}
-                  </td>
-                  <td className="py-3 px-4 text-gray-600">
-                    {item.category || "N/A"}
-                  </td>
-                  <td className="py-3 px-4 text-gray-700">{item.totalStock}</td>
-                  <td className="py-3 px-4 text-gray-700">
-                    {item.unitCost.toFixed(2)}
-                  </td>
-                  <td className="py-3 px-4 text-gray-700">
-                    {(item.unitCost * item.totalStock).toFixed(2)}
-                  </td>
-                  <td className="py-3 px-4 text-gray-500">
-                    {dayjs(item.entryDate).format("MMM D, YYYY")}
-                  </td>
-                  <td className="py-3 px-4 flex gap-2">
+                  {item.name}
+                </td>
+                <td style={{ padding: "10px 16px" }}>
+                  {item.category || "N/A"}
+                </td>
+                <td style={{ padding: "10px 16px" }}>{item.totalStock}</td>
+                <td style={{ padding: "10px 16px" }}>
+                  {item.unitCost.toFixed(2)}
+                </td>
+                <td style={{ padding: "10px 16px" }}>
+                  {(item.unitCost * item.totalStock).toFixed(2)}
+                </td>
+                <td style={{ padding: "10px 16px", color: "#6b7280" }}>
+                  {dayjs(item.entryDate).format("MMM D, YYYY")}
+                </td>
+                <td style={{ textAlign: "center", padding: "10px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      justifyContent: "center",
+                    }}
+                  >
                     <button
-                      onClick={() => setSelectedItem(item)}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg transition-all"
+                      onClick={() => {
+                        setSelectedItem(item);
+                        setUseModalOpen(false);
+                      }}
+                      style={{
+                        padding: "6px 10px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: "#4f46e5",
+                        color: "#fff",
+                        cursor: "pointer",
+                      }}
                     >
                       View Details
                     </button>
+
                     <button
                       onClick={() => {
                         setSelectedItem(item);
                         setUseModalOpen(true);
+                        setSelectedDoctor("");
+                        setSelectedPatient(null);
+                        setSearchPatient("");
+                        setUseQuantity("");
                       }}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg transition-all"
+                      style={{
+                        padding: "6px 10px",
+                        borderRadius: "8px",
+                        border: "none",
+                        background: "#10b981",
+                        color: "#fff",
+                        cursor: "pointer",
+                      }}
                     >
                       Use
                     </button>
-                  </td>
-                </tr>
-              ))}
-              {items.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="text-center py-6 text-gray-500 font-medium"
-                  >
-                    No medicines found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
 
-        {/* Use Modal */}
-        <AnimatePresence>
-          {useModalOpen && selectedItem && (
-            <motion.div
-              className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <motion.form
-                className="bg-white rounded-2xl shadow-lg p-6 w-96 flex flex-col gap-3"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                onSubmit={handleUseItem}
-              >
-                <h2 className="text-xl font-bold mb-2">
-                  Use `{selectedItem.name}`
-                </h2>
-
-                <select
-                  value={selectedDoctor}
-                  onChange={(e) => setSelectedDoctor(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-2"
-                  required
+            {items.length === 0 && (
+              <tr>
+                <td
+                  colSpan={8}
+                  style={{
+                    textAlign: "center",
+                    padding: "20px",
+                    color: "#6b7280",
+                  }}
                 >
-                  <option value="">-- Select Doctor --</option>
-                  {doctors.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} ({d.email})
-                    </option>
-                  ))}
-                </select>
+                  No medicines found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-                <input
-                  type="text"
-                  placeholder="Search patient by name or phone"
-                  value={searchPatient}
-                  onChange={(e) => setSearchPatient(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-2"
-                />
-
-                {searchPatient && patients.length > 0 && (
-                  <div className="border border-gray-300 rounded-lg max-h-48 overflow-y-auto mt-1">
-                    {patients.map((p) => (
-                      <div
-                        key={p.id}
-                        onClick={() => {
-                          setSelectedPatient(p);
-                          setSearchPatient("");
-                        }}
-                        className="p-2 hover:bg-indigo-100 cursor-pointer"
-                      >
-                        {p.name} ({p.contactNumber})
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {selectedPatient && (
-                  <div className="p-2 mt-2 border border-green-400 rounded-lg bg-green-50 text-green-800">
-                    Selected Patient: {selectedPatient.name} (
-                    {selectedPatient.contactNumber})
-                  </div>
-                )}
-
-                {/* Quantity Input */}
-                <input
-                  type="number"
-                  min={1}
-                  max={selectedItem.totalStock}
-                  value={useQuantity}
-                  onChange={(e) => setUseQuantity(parseInt(e.target.value))}
-                  className="border border-gray-300 rounded-lg p-2"
-                  placeholder={`Quantity (max ${selectedItem.totalStock})`}
-                  required
-                />
-
-                <div className="flex justify-between mt-3">
-                  <button
-                    type="submit"
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg w-1/2"
-                  >
-                    Submit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUseModalOpen(false);
-                      setSelectedPatient(null);
-                      setSelectedDoctor("");
-                      setUseQuantity(1);
-                      setSearchPatient("");
-                    }}
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-1.5 rounded-lg w-1/2 ml-2"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </motion.form>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* View Details Modal */}
-        <AnimatePresence>
-          {selectedItem && !useModalOpen && (
-            <motion.div
-              className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+      {/* ------------------ Use Modal ------------------ */}
+      <AnimatePresence>
+        {useModalOpen && selectedItem && (
+          <motion.div
+            key="use-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setUseModalOpen(false)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backdropFilter: "blur(8px)",
+              backgroundColor: "rgba(0,0,0,0.32)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 60,
+            }}
+          >
+            <motion.form
+              onClick={(e) => e.stopPropagation()}
+              onSubmit={handleUseItem}
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ type: "spring", stiffness: 120, damping: 16 }}
+              style={{
+                background: "rgba(255,255,255,0.9)",
+                backdropFilter: "blur(12px)",
+                padding: "1.5rem",
+                borderRadius: "12px",
+                width: "420px",
+                boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
+              }}
             >
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg p-6 w-96"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
+              <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>
+                Use `{selectedItem.name}`
+              </h2>
+
+              {/* Doctor select */}
+              <select
+                value={selectedDoctor}
+                onChange={(e) => setSelectedDoctor(e.target.value)}
+                required
+                style={{
+                  display: "block",
+                  marginBottom: "0.75rem",
+                  width: "100%",
+                  padding: "0.6rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
               >
-                <h2 className="text-2xl font-bold text-indigo-700 mb-3">
-                  {selectedItem.name}
-                </h2>
-                <p className="text-gray-700 mb-1">
-                  <span className="font-semibold">Category:</span>{" "}
-                  {selectedItem.category || "N/A"}
-                </p>
-                <p className="text-gray-700 mb-1">
-                  <span className="font-semibold">Description:</span>{" "}
-                  {selectedItem.description || "N/A"}
-                </p>
-                <p className="text-gray-700 mb-1">
-                  <span className="font-semibold">Stock:</span>{" "}
-                  {selectedItem.totalStock}
-                </p>
-                <p className="text-gray-700 mb-1">
-                  <span className="font-semibold">Unit Cost:</span> $
-                  {selectedItem.unitCost.toFixed(2)}
-                </p>
-                <p className="text-gray-700 mb-1">
-                  <span className="font-semibold">Total Cost:</span> $
-                  {(selectedItem.unitCost * selectedItem.totalStock).toFixed(2)}
-                </p>
-                <p className="text-gray-700 mb-3">
-                  <span className="font-semibold">Entry Date:</span>{" "}
-                  {dayjs(selectedItem.entryDate).format("MMM D, YYYY")}
-                </p>
+                <option value="">-- Select Doctor --</option>
+                {doctors.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} ({d.email})
+                  </option>
+                ))}
+              </select>
+
+              {/* Patient search */}
+              <input
+                type="text"
+                placeholder="Search patient by name or phone"
+                value={searchPatient}
+                onChange={(e) => setSearchPatient(e.target.value)}
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  width: "100%",
+                  padding: "0.6rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
+              />
+
+              {/* patient suggestions */}
+              {searchPatient && patients.length > 0 && (
+                <div
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "8px",
+                    maxHeight: "160px",
+                    overflowY: "auto",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  {patients.map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => {
+                        setSelectedPatient(p);
+                        setSearchPatient("");
+                      }}
+                      style={{
+                        padding: "0.6rem",
+                        cursor: "pointer",
+                        borderBottom: "1px solid rgba(0,0,0,0.03)",
+                      }}
+                    >
+                      {p.name} ({p.contactNumber})
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* selected patient */}
+              {selectedPatient && (
+                <div
+                  style={{
+                    padding: "0.6rem",
+                    marginBottom: "0.6rem",
+                    border: "1px solid #10b981",
+                    background: "rgba(16,185,129,0.06)",
+                    borderRadius: "8px",
+                    color: "#065f46",
+                  }}
+                >
+                  Selected Patient: {selectedPatient.name} (
+                  {selectedPatient.contactNumber})
+                </div>
+              )}
+
+              {/* quantity input */}
+              <input
+                type="number"
+                min={1}
+                max={selectedItem.totalStock}
+                value={useQuantity === "" ? "" : useQuantity}
+                onChange={(e) =>
+                  setUseQuantity(
+                    e.target.value === "" ? "" : Number(e.target.value)
+                  )
+                }
+                placeholder={`Quantity (max ${selectedItem.totalStock})`}
+                required
+                style={{
+                  display: "block",
+                  marginBottom: "1rem",
+                  width: "100%",
+                  padding: "0.6rem",
+                  borderRadius: "8px",
+                  border: "1px solid #ccc",
+                }}
+              />
+
+              <div
+                style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}
+              >
+                <button
+                  type="submit"
+                  style={{
+                    background: "#10b981",
+                    color: "#fff",
+                    padding: "0.6rem 0.8rem",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    flex: 1,
+                  }}
+                >
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUseModalOpen(false);
+                    setSelectedPatient(null);
+                    setSelectedDoctor("");
+                    setUseQuantity("");
+                    setSearchPatient("");
+                  }}
+                  style={{
+                    background: "#e5e7eb",
+                    padding: "0.6rem 0.8rem",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    flex: 1,
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ------------------ View Details Modal ------------------ */}
+      <AnimatePresence>
+        {selectedItem && !useModalOpen && (
+          <motion.div
+            key={selectedItem.id + "-view"}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backdropFilter: "blur(8px)",
+              backgroundColor: "rgba(0,0,0,0.32)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 60,
+            }}
+            onClick={() => setSelectedItem(null)}
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ type: "spring", stiffness: 120, damping: 16 }}
+              style={{
+                background: "rgba(255,255,255,0.95)",
+                padding: "1.5rem",
+                borderRadius: "12px",
+                width: "420px",
+                boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
+              }}
+            >
+              <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>
+                {selectedItem.name}
+              </h2>
+
+              <p style={{ marginBottom: "0.5rem" }}>
+                <strong>Category:</strong> {selectedItem.category || "N/A"}
+              </p>
+              <p style={{ marginBottom: "0.5rem" }}>
+                <strong>Description:</strong>{" "}
+                {selectedItem.description || "N/A"}
+              </p>
+              <p style={{ marginBottom: "0.5rem" }}>
+                <strong>Stock:</strong> {selectedItem.totalStock}
+              </p>
+              <p style={{ marginBottom: "0.5rem" }}>
+                <strong>Unit Cost:</strong> {selectedItem.unitCost.toFixed(2)}{" "}
+                TK
+              </p>
+              <p style={{ marginBottom: "0.5rem" }}>
+                <strong>Total Cost:</strong>{" "}
+                {(selectedItem.unitCost * selectedItem.totalStock).toFixed(2)}{" "}
+                TK
+              </p>
+              <p style={{ marginBottom: "0.5rem" }}>
+                <strong>Entry Date:</strong>{" "}
+                {dayjs(selectedItem.entryDate).format("MMM D, YYYY")}
+              </p>
+              <p style={{ marginBottom: "1rem" }}>
+                <strong>Expiry Date:</strong>{" "}
+                {selectedItem.expiryDate
+                  ? dayjs(selectedItem.expiryDate).format("MMM D, YYYY")
+                  : "N/A"}
+              </p>
+
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <button
                   onClick={() => setSelectedItem(null)}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-1.5 rounded-lg w-full mt-2 transition-all"
+                  style={{
+                    marginLeft: "auto",
+                    padding: "0.5rem 0.9rem",
+                    borderRadius: "8px",
+                    border: "none",
+                    background: "#ef4444",
+                    color: "#fff",
+                    cursor: "pointer",
+                  }}
                 >
                   Close
                 </button>
-              </motion.div>
+              </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* History Modal */}
-        <AnimatePresence>
-          {historyModalOpen && (
+      {/* ------------------ History Modal ------------------ */}
+      <AnimatePresence>
+        {historyModalOpen && (
+          <motion.div
+            key="history-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setHistoryModalOpen(false)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backdropFilter: "blur(8px)",
+              backgroundColor: "rgba(0,0,0,0.32)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 60,
+            }}
+          >
             <motion.div
-              className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              onClick={(e) => e.stopPropagation()}
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              transition={{ type: "spring", stiffness: 120, damping: 16 }}
+              style={{
+                background: "rgba(255,255,255,0.95)",
+                padding: "1.25rem",
+                borderRadius: "12px",
+                width: "760px",
+                maxHeight: "80vh",
+                overflowY: "auto",
+                boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
+              }}
             >
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg p-6 w-[700px] max-h-[80vh] overflow-y-auto"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-              >
-                <h2 className="text-2xl font-bold text-indigo-700 mb-4">
-                  Inventory Usage History
-                </h2>
+              <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>
+                Inventory Usage History
+              </h2>
 
-                <table className="w-full border-collapse">
-                  <thead className="bg-indigo-600 text-white">
-                    <tr>
-                      <th className="py-2 px-3">#</th>
-                      <th className="py-2 px-3">Date</th>
-                      <th className="py-2 px-3">Medicine</th>
-                      <th className="py-2 px-3">Patient</th>
-                      <th className="py-2 px-3">Doctor</th>
-                      <th className="py-2 px-3">Quantity</th>
-                      <th className="py-2 px-3">Total Cost ($)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {usageHistory.length > 0 ? (
-                      usageHistory
-                        .sort(
-                          (a, b) =>
-                            new Date(b.usedDate).getTime() -
-                            new Date(a.usedDate).getTime()
-                        )
-                        .map((u, idx) => (
-                          <tr
-                            key={u.id}
-                            className="border-b hover:bg-indigo-50 transition-all"
-                          >
-                            <td className="py-2 px-3">{idx + 1}</td>
-                            <td className="py-2 px-3">
-                              {dayjs(u.usedDate).format("MMM D, YYYY HH:mm")}
-                            </td>
-                            <td className="py-2 px-3">
-                              {u.inventoryItem.name}
-                            </td>
-                            <td className="py-2 px-3">{u.patient.name}</td>
-                            <td className="py-2 px-3">{u.doctor.name}</td>
-                            <td className="py-2 px-3">{u.quantityUsed}</td>
-                            <td className="py-2 px-3">
-                              {u.totalCost.toFixed(2)}
-                            </td>
-                          </tr>
-                        ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan={7}
-                          className="text-center py-4 text-gray-500"
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead style={{ backgroundColor: "#f2f2f2" }}>
+                  <tr>
+                    <th style={{ padding: "8px", textAlign: "left" }}>#</th>
+                    <th style={{ padding: "8px", textAlign: "left" }}>Date</th>
+                    <th style={{ padding: "8px", textAlign: "left" }}>
+                      Medicine
+                    </th>
+                    <th style={{ padding: "8px", textAlign: "left" }}>
+                      Patient
+                    </th>
+                    <th style={{ padding: "8px", textAlign: "left" }}>
+                      Doctor
+                    </th>
+                    <th style={{ padding: "8px", textAlign: "left" }}>
+                      Quantity
+                    </th>
+                    <th style={{ padding: "8px", textAlign: "left" }}>
+                      Total Cost (TK)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {usageHistory.length > 0 ? (
+                    usageHistory
+                      .sort(
+                        (a, b) =>
+                          new Date(b.usedDate).getTime() -
+                          new Date(a.usedDate).getTime()
+                      )
+                      .map((u, idx) => (
+                        <tr
+                          key={u.id}
+                          style={{ borderBottom: "1px solid #e5e7eb" }}
                         >
-                          No usage history found.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                          <td style={{ padding: "8px" }}>{idx + 1}</td>
+                          <td style={{ padding: "8px" }}>
+                            {dayjs(u.usedDate).format("MMM D, YYYY HH:mm")}
+                          </td>
+                          <td style={{ padding: "8px" }}>
+                            {u.inventoryItem.name}
+                          </td>
+                          <td style={{ padding: "8px" }}>{u.patient.name}</td>
+                          <td style={{ padding: "8px" }}>{u.doctor.name}</td>
+                          <td style={{ padding: "8px" }}>{u.quantityUsed}</td>
+                          <td style={{ padding: "8px" }}>
+                            {u.totalCost.toFixed(2)}
+                          </td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        style={{
+                          textAlign: "center",
+                          padding: "16px",
+                          color: "#6b7280",
+                        }}
+                      >
+                        No usage history found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
 
+              {/* Total Usage Cost */}
+              {usageHistory.length > 0 && (
+                <p
+                  style={{
+                    marginTop: "1rem",
+                    textAlign: "right",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                  }}
+                >
+                  Total Usage Cost: {totalUsageCost.toFixed(2)} TK
+                </p>
+              )}
+
+              <div style={{ marginTop: "1rem" }}>
                 <button
                   onClick={() => setHistoryModalOpen(false)}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-1.5 rounded-lg w-full mt-4 transition-all"
+                  style={{
+                    background: "#e5e7eb",
+                    padding: "0.6rem 0.9rem",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    float: "right",
+                  }}
                 >
                   Close
                 </button>
-              </motion.div>
+              </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
