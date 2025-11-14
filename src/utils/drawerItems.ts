@@ -11,6 +11,7 @@ import TryIcon from "@mui/icons-material/Try";
 import PersonIcon from "@mui/icons-material/Person";
 import KeyIcon from "@mui/icons-material/Key";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
@@ -64,9 +65,9 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
           icon: MedicalInformationIcon,
         },
         {
-          title: "Schedules",
-          path: `${role}/schedules`,
-          icon: CalendarMonthIcon,
+          title: "Inventory",
+          path: `${role}/inventory`,
+          icon: InventoryIcon,
         },
         {
           title: "Appointments",
