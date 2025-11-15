@@ -1,4 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -126,7 +127,7 @@ const AdminPatientPage = () => {
         {
           method: "POST",
           body: formData,
-          headers: { Authorization: token },
+          headers: token ? { Authorization: token } : {},
         }
       );
 
@@ -161,7 +162,7 @@ const AdminPatientPage = () => {
     try {
       setLoading(true);
       const res = await fetch(`http://localhost:5000/api/v1/patient/${id}`, {
-        headers: { Authorization: token },
+        headers: token ? { Authorization: token } : {},
       });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
