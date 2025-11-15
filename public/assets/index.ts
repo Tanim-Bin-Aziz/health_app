@@ -5,7 +5,6 @@ const assets = {
 
     doctors: require("./landing_page/doctors.png"),
     atm: require("./landing_page/atm-card.png"),
-    videoCall: require("./landing_page/video_call.png"),
     report: require("./landing_page/diagnostic.png"),
     budge: require("./landing_page/badge.png"),
     folder: require("./landing_page/folder.png"),

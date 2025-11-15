@@ -3,7 +3,6 @@
 import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
 import { Box, Chip, IconButton } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import VideocamIcon from "@mui/icons-material/Videocam";
 import Link from "next/link";
 import { dateFormatter } from "@/utils/dateFormatter";
 import { getTimeIn12HourFormat } from "../../doctor/schedules/components/MultipleSelectFieldChip";
@@ -65,19 +64,7 @@ const PatientAppointmentsPage = () => {
       headerAlign: "center",
       align: "center",
       renderCell: ({ row }) => {
-        return (
-          <IconButton
-            component={Link}
-            href={`/video?videoCallingId=${row?.videoCallingId}`}
-            disabled={row.paymentStatus === "UNPAID"}
-          >
-            <VideocamIcon
-              sx={{
-                color: row.paymentStatus === "PAID" ? "primary.main" : "",
-              }}
-            />
-          </IconButton>
-        );
+        return <IconButton></IconButton>;
       },
     },
   ];
