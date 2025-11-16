@@ -1,7 +1,6 @@
 import { USER_ROLE } from "@/contants/role";
 import { DrawerItem, UserRole } from "@/types";
 
-//icons
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupIcon from "@mui/icons-material/Group";
 import MedicalInformationIcon from "@mui/icons-material/MedicalInformation";

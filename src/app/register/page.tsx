@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
@@ -80,7 +78,7 @@ const RegisterPage = () => {
             p: 4,
             textAlign: "center",
             borderRadius: 3,
-            background: "rgba(255, 255, 255, 0.15)", // glass effect
+            background: "rgba(255, 255, 255, 0.15)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
             boxShadow: `
@@ -88,7 +86,7 @@ const RegisterPage = () => {
               0 -8px 25px rgba(0, 0, 0, 0.10),   /* top */
               8px 0 25px rgba(0, 0, 0, 0.10),    /* right */
               -8px 0 25px rgba(0, 0, 0, 0.10)    /* left */
-            `, // 4-side shadow
+            `,
             border: "1px solid rgba(255, 255, 255, 0.18)",
           }}
         >
@@ -156,15 +154,15 @@ const RegisterPage = () => {
                   py: 1.2,
                   fontWeight: 600,
                   color: "#fff",
-                  background: "linear-gradient(135deg, #667eea, #764ba2)", // gradient
+                  background: "linear-gradient(135deg, #667eea, #764ba2)",
                   borderRadius: 2,
-                  boxShadow: "0 4px 15px rgba(118, 75, 162, 0.4)", // glow shadow
+                  boxShadow: "0 4px 15px rgba(118, 75, 162, 0.4)",
                   backdropFilter: "blur(6px)",
                   WebkitBackdropFilter: "blur(6px)",
                   textTransform: "none",
                   "&:hover": {
                     background: "linear-gradient(135deg, #764ba2, #667eea)",
-                    boxShadow: "0 6px 20px rgba(118, 75, 162, 0.6)", // stronger glow
+                    boxShadow: "0 6px 20px rgba(118, 75, 162, 0.6)",
                   },
                 }}
                 fullWidth={true}

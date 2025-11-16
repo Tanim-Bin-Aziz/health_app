@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, styled, Typography } from "@mui/material";
 
 const StyledInformationBox = styled(Box)(({ theme }) => ({

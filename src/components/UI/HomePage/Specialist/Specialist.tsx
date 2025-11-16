@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +9,6 @@ const Specialist = async () => {
     },
   });
   const { data: specialties } = await res.json();
-  //   console.log(specialties);
 
   return (
     <Container>

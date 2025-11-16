@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -62,7 +59,6 @@ export default function InventoryPage() {
 
   const token = getFromLocalStorage(authKey);
 
-  // ---------------------- Fetch Inventory ----------------------
   const fetchInventory = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/v1/inventory", {
@@ -80,7 +76,6 @@ export default function InventoryPage() {
     fetchInventory();
   }, []);
 
-  // ---------------------- Fetch Doctors ----------------------
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -96,7 +91,6 @@ export default function InventoryPage() {
     fetchDoctors();
   }, []);
 
-  // ---------------------- Fetch Patients ----------------------
   useEffect(() => {
     const fetchPatients = async () => {
       try {
@@ -115,7 +109,6 @@ export default function InventoryPage() {
     fetchPatients();
   }, []);
 
-  // ---------------------- Filter Patients ----------------------
   useEffect(() => {
     if (!searchPatient) return setPatients([]);
     const filtered = allPatients.filter(
@@ -126,7 +119,6 @@ export default function InventoryPage() {
     setPatients(filtered);
   }, [searchPatient, allPatients]);
 
-  // ---------------------- Use Item Submit ----------------------
   const handleUseItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
@@ -175,7 +167,6 @@ export default function InventoryPage() {
     }
   };
 
-  // ---------------------- Fetch Usage History ----------------------
   const fetchHistory = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/v1/inventory/usage", {
@@ -207,16 +198,13 @@ export default function InventoryPage() {
       .replace(":", ".")}`;
   };
 
-  // ---------------------- Total Available Meds Value ----------------------
   const totalAvailableCost = items.reduce(
     (acc, item) => acc + item.totalStock * item.unitCost,
     0
   );
 
-  // ---------------------- Total Usage Cost ----------------------
   const totalUsageCost = usageHistory.reduce((acc, u) => acc + u.totalCost, 0);
 
-  // ---------------------- Render ----------------------
   return (
     <div style={{ padding: "1rem" }}>
       <h1
@@ -304,7 +292,6 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {/* ------------------ Inventory Table ------------------ */}
       <div
         style={{
           marginTop: "1rem",
@@ -429,7 +416,6 @@ export default function InventoryPage() {
         </table>
       </div>
 
-      {/* ------------------ Use Modal ------------------ */}
       <AnimatePresence>
         {useModalOpen && selectedItem && (
           <motion.div
@@ -473,7 +459,6 @@ export default function InventoryPage() {
                 Use `{selectedItem.name}`
               </h2>
 
-              {/* Doctor select */}
               <select
                 value={selectedDoctor}
                 onChange={(e) => setSelectedDoctor(e.target.value)}
@@ -495,7 +480,6 @@ export default function InventoryPage() {
                 ))}
               </select>
 
-              {/* Patient search */}
               <input
                 type="text"
                 placeholder="Search patient by name or phone"
@@ -511,7 +495,6 @@ export default function InventoryPage() {
                 }}
               />
 
-              {/* patient suggestions */}
               {searchPatient && patients.length > 0 && (
                 <div
                   style={{
@@ -541,7 +524,6 @@ export default function InventoryPage() {
                 </div>
               )}
 
-              {/* selected patient */}
               {selectedPatient && (
                 <div
                   style={{
@@ -558,7 +540,6 @@ export default function InventoryPage() {
                 </div>
               )}
 
-              {/* quantity input */}
               <input
                 type="number"
                 min={1}
@@ -624,7 +605,6 @@ export default function InventoryPage() {
         )}
       </AnimatePresence>
 
-      {/* ------------------ View Details Modal ------------------ */}
       <AnimatePresence>
         {selectedItem && !useModalOpen && (
           <motion.div
@@ -717,7 +697,6 @@ export default function InventoryPage() {
         )}
       </AnimatePresence>
 
-      {/* ------------------ History Modal ------------------ */}
       <AnimatePresence>
         {historyModalOpen && (
           <motion.div
@@ -828,7 +807,6 @@ export default function InventoryPage() {
                 </tbody>
               </table>
 
-              {/* Total Usage Cost */}
               {usageHistory.length > 0 && (
                 <p
                   style={{

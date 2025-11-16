@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
 import { Box, Chip, IconButton } from "@mui/material";

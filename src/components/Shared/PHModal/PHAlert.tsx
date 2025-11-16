@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -15,8 +14,6 @@ type TProps = {
   handleConfirm: () => void;
   handleCancel: () => void;
 };
-
-// ok
 
 export default function PHAlert({
   open,

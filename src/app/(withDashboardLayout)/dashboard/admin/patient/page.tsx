@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -86,7 +83,6 @@ const AdminPatientPage = () => {
     fetchPatients();
   }, []);
 
-  // Filter/search
   useEffect(() => {
     let filtered = allPatients;
 
@@ -108,7 +104,6 @@ const AdminPatientPage = () => {
     setPatients(filtered);
   }, [searchTerm, filterDate, allPatients]);
 
-  // Create patient
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -157,7 +152,6 @@ const AdminPatientPage = () => {
     }
   };
 
-  // View patient
   const handleViewDetails = async (id: string) => {
     try {
       setLoading(true);
@@ -196,7 +190,6 @@ const AdminPatientPage = () => {
     <div style={{ padding: "1rem" }}>
       <h1>Admin Patient List</h1>
 
-      {/* Top Row */}
       <div
         style={{
           display: "flex",
@@ -279,7 +272,6 @@ const AdminPatientPage = () => {
       {loading && <p>Loading patients...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Table with outer rounded border */}
       <div
         style={{
           marginTop: "1rem",
@@ -343,7 +335,6 @@ const AdminPatientPage = () => {
         </table>
       </div>
 
-      {/* Create Patient Modal */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -511,7 +502,6 @@ const AdminPatientPage = () => {
         )}
       </AnimatePresence>
 
-      {/* View Patient Modal */}
       <AnimatePresence>
         {isViewModalOpen && viewPatient && (
           <motion.div

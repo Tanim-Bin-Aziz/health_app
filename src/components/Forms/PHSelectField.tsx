@@ -29,13 +29,13 @@ const PHSelectField = ({
     <Controller
       control={control}
       name={name}
-      defaultValue="" // prevents uncontrolled -> controlled warning
+      defaultValue=""
       render={({ field }) => (
         <TextField
           {...field}
           select
           label={label}
-          value={field.value ?? ""} // always defined
+          value={field.value ?? ""}
           required={required}
           fullWidth={fullWidth}
           size={size}

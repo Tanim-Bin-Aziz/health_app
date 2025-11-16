@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Grid } from "@mui/material";
 import { Gender } from "@/types/common";
 import { FieldValues } from "react-hook-form";

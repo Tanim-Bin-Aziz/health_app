@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 import { Box, Button, Input, SvgIconProps, SxProps } from "@mui/material";

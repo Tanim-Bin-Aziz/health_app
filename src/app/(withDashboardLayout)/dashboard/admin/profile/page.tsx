@@ -9,7 +9,6 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 
-// 🟣 Custom Admin Chip
 const AdminChip = styled(Chip)(() => ({
   backgroundColor: "rgba(168, 85, 247, 0.1)",
   color: "dark",
@@ -23,7 +22,6 @@ const AdminChip = styled(Chip)(() => ({
   },
 }));
 
-// ✨ Glass card style
 const GlassCard = styled(Card)(() => ({
   background: "rgba(255, 255, 255, 0.15)",
   border: "1px solid rgba(255, 255, 255, 0.25)",
@@ -78,7 +76,7 @@ export default function AdminProfilePage() {
       <motion.div
         whileHover={{ scale: 1.02 }}
         transition={{ type: "spring", stiffness: 200 }}
-        className="w-full max-w-[500px] sm:w-[400px]" // fixed max width
+        className="w-full max-w-[500px] sm:w-[400px]"
       >
         <GlassCard className="flex flex-col gap-4">
           {/* Profile Pic & Name/Admin */}

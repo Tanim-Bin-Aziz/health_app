@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -70,7 +69,7 @@ const DoctorUpdatePage = ({ params }: TParams) => {
         "Loading..."
       ) : (
         <PHForm
-          key={String(data?.id ?? doctorId ?? "new")} // remount when data changes
+          key={String(data?.id ?? doctorId ?? "new")}
           onSubmit={handleFormSubmit}
           defaultValues={defaultValues}
         >

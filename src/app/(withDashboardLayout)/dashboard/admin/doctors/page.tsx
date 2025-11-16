@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
 import DoctorModal from "./components/DoctorModal";
@@ -19,7 +17,6 @@ const DoctorsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const query: Record<string, any> = {};
   const [searchTerm, setSearchTerm] = useState<string>("");
-  // console.log(searchTerm);
 
   const debouncedTerm = useDebounced({
     searchQuery: searchTerm,
@@ -33,16 +30,12 @@ const DoctorsPage = () => {
   const { data, isLoading } = useGetAllDoctorsQuery({ ...query });
   const [deleteDoctor] = useDeleteDoctorMutation();
 
-  // console.log(data);
   const doctors = data?.doctors;
   const meta = data?.meta;
-  // console.log(doctors);
 
   const handleDelete = async (id: string) => {
-    // console.log(id);
     try {
       const res = await deleteDoctor(id).unwrap();
-      // console.log(res);
       if (res?.id) {
         toast.success("Doctor deleted successfully!!!");
       }

@@ -37,10 +37,9 @@ const Navbar = () => {
   const handleLogOut = () => {
     logoutUser(router);
     handleMenuClose();
-    window.location.reload(); // full page reload after logout
+    window.location.reload();
   };
 
-  // Generate initials from name
   const getInitials = (name?: string) => {
     if (!name) return "";
     const names = name.split(" ");
@@ -49,7 +48,6 @@ const Navbar = () => {
       : names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
   };
 
-  // Get profile picture URL
   const profilePicUrl = () => {
     if (!userInfo?.profilePic) return undefined;
     if (userInfo.profilePic.startsWith("http")) return userInfo.profilePic;
@@ -103,7 +101,6 @@ const Navbar = () => {
             )}
           </Stack>
 
-          {/* Profile / Login */}
           {userInfo?.userId ? (
             <Box>
               <IconButton onClick={handleMenuOpen} sx={{ p: 0 }}>

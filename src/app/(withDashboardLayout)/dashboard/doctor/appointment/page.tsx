@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useGetMyAppointmentsQuery } from "@/redux/api/appointmentApi";
-import { Box, IconButton } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import Link from "next/link";
+import { Box } from "@mui/material";
+import { GridColDef } from "@mui/x-data-grid";
 import { dateFormatter } from "@/utils/dateFormatter";
 import { getTimeIn12HourFormat } from "../schedules/components/MultipleSelectFieldChip";
 
 const PatientAppointmentsPage = () => {
   const { data } = useGetMyAppointmentsQuery({});
-  // console.log(appointments);
 
   const columns: GridColDef[] = [
     {

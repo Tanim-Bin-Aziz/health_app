@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react";
 import { Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -60,7 +58,6 @@ export default function MultipleSelectFieldChip({
   setSelectedScheduleIds,
 }: any) {
   const theme = useTheme();
-  // const [personName, setPersonName] = React.useState<string[]>([]);
 
   const handleChange = (
     event: SelectChangeEvent<typeof selectedScheduleIds>
@@ -69,7 +66,6 @@ export default function MultipleSelectFieldChip({
       target: { value },
     } = event;
     setSelectedScheduleIds(
-      // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };

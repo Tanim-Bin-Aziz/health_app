@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
 import { IMeta } from "@/types/common";
@@ -11,10 +10,8 @@ export const doctorApi = baseApi.injectEndpoints({
         console.log(data);
         const formData = new FormData();
 
-        // append password
         formData.append("password", data.password);
 
-        // flatten and append doctor fields
         Object.keys(data.doctor).forEach((key) => {
           formData.append(`${key}`, data.doctor[key]);
         });
@@ -22,7 +19,7 @@ export const doctorApi = baseApi.injectEndpoints({
         return {
           url: "/doctor",
           method: "POST",
-          body: formData, // <-- important
+          body: formData,
         };
       },
       invalidatesTags: [tagTypes.doctor],
@@ -50,7 +47,7 @@ export const doctorApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.doctor],
     }),
-    //get single doctor
+
     getDoctor: build.query({
       query: (id: string | string[] | undefined) => ({
         url: `/doctor/${id}`,
@@ -58,7 +55,7 @@ export const doctorApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.doctor],
     }),
-    // update a doctor
+
     updateDoctor: build.mutation({
       query: (data) => {
         console.log(data);

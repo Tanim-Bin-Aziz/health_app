@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, List, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import assets from "../../../../public/assets";

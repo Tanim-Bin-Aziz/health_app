@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
@@ -27,7 +26,7 @@ const LoginPage = () => {
 
   const handleLogin = async (values: FieldValues) => {
     setIsLoading(true);
-    setError(""); // Clear previous errors
+    setError("");
 
     try {
       const res = await userLogin(values);
@@ -37,14 +36,12 @@ const LoginPage = () => {
         storeUserInfo({ accessToken: res?.data?.accessToken });
         router.push("/dashboard");
       } else {
-        // Handle unexpected success response format
         setError("Login failed. Please try again.");
         toast.error("Login failed. Please try again.");
       }
     } catch (err: any) {
       console.log("Login error details:", err);
 
-      // Extract error message with fallback chain
       let errorMsg = "Something went wrong!";
 
       if (err?.response?.data?.message) {
@@ -55,7 +52,6 @@ const LoginPage = () => {
         errorMsg = err.message;
       }
 
-      // Special handling for common error messages
       if (errorMsg.toLowerCase().includes("user does not exist")) {
         errorMsg = "User does not exist. Please check your email address.";
       } else if (errorMsg.toLowerCase().includes("password")) {
@@ -70,7 +66,6 @@ const LoginPage = () => {
       setError(errorMsg);
       toast.error(errorMsg);
 
-      // Auto-clear error after 8 seconds
       setTimeout(() => setError(""), 8000);
     } finally {
       setIsLoading(false);

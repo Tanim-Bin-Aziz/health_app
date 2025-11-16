@@ -26,7 +26,7 @@ const Footer = () => {
           <Image src={twitterIcon} width={30} height={30} alt="facebook" />
           <Image src={linkedIcon} width={30} height={30} alt="facebook" />
         </Stack>
-        {/* <div className="border-b-[1px] border-dashed"></div> */}
+
         <Box
           sx={{
             border: "1px dashed lightgray",
@@ -50,11 +50,7 @@ const Footer = () => {
             fontWeight={600}
             color="white"
           >
-            P
-            <Box component="span" color="primary.main">
-              H
-            </Box>{" "}
-            Health Care
+            Next Dent
           </Typography>
           <Typography component="p" color="white">
             Privacy Policy! Terms & Conditions

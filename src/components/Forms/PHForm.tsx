@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   FieldValues,
   FormProvider,
@@ -36,7 +35,6 @@ const PHForm = ({
   const { handleSubmit, reset } = methods;
 
   const submit: SubmitHandler<FieldValues> = (data) => {
-    // console.log(data);
     onSubmit(data);
     reset();
   };

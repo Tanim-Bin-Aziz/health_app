@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { Box, Button, IconButton, Pagination } from "@mui/material";
 import DoctorScheduleModal from "./components/DoctorScheduleModal";

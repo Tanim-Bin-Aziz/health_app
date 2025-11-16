@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
 import SpecialtyModal from "./components/SpecialtyModal";
@@ -28,7 +27,6 @@ const SpecialtiesPage = () => {
     }
   };
 
-  // console.log(data);
   const columns: GridColDef[] = [
     { field: "title", headerName: "Title", width: 400 },
     {
