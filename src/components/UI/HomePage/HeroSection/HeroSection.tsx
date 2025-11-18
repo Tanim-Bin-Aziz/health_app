@@ -34,7 +34,7 @@ const HeroSection = () => {
           variant="h2"
           component="h1"
           fontWeight={600}
-          color="primary.main"
+          color="#59AC77"
         >
           Preventive Care
         </Typography>
@@ -45,7 +45,17 @@ const HeroSection = () => {
           vitae id?
         </Typography>
         <Box sx={{ display: "flex", gap: 2 }}>
-          <Button>Make appointment</Button>
+          <Button
+            sx={{
+              bgcolor: "#59AC77",
+              color: "white",
+              "&:hover": {
+                bgcolor: "#4e9467",
+              },
+            }}
+          >
+            Make appointment
+          </Button>
           <Button variant="outlined">Contact us</Button>
         </Box>
       </Box>

@@ -69,6 +69,11 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
           icon: InventoryIcon,
         },
         {
+          title: "Treatments",
+          path: `${role}/treatment`,
+          icon: MedicalInformationIcon,
+        },
+        {
           title: "Appointments",
           path: `${role}/appointments`,
           icon: BookOnlineIcon,

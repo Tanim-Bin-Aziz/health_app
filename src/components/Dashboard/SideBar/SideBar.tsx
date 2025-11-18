@@ -1,6 +1,7 @@
 import { Box, List, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import assets from "../../../../public/assets";
+import logo from "../../../../public/nextdent.png";
 import Link from "next/link";
 import { drawerItems } from "@/utils/drawerItems";
 import { UserRole } from "@/types";
@@ -30,7 +31,7 @@ const SideBar = () => {
         component={Link}
         href="/"
       >
-        <Image src={assets.svgs.logo} width={40} height={40} alt="logo" />
+        <Image src={logo} width={60} height={40} alt="logo" />
         <Typography
           variant="h6"
           component="h1"
@@ -38,7 +39,7 @@ const SideBar = () => {
             cursor: "pointer",
           }}
         >
-          Next Dent
+          {/* next dent name ekahne optional */}
         </Typography>
       </Stack>
       <List>

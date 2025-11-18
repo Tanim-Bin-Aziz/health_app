@@ -55,7 +55,7 @@ const Navbar = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: "#97DBAE" }}>
+    <Box sx={{ bgcolor: "#59AC77" }}>
       <Container>
         <Stack
           py={2}
@@ -80,7 +80,7 @@ const Navbar = () => {
               color="#ffffff"
               sx={{ cursor: "pointer" }}
             >
-              Service
+              Appointment
             </Typography>
             <Typography color="#ffffff">Treatment</Typography>
             <Typography
@@ -169,7 +169,15 @@ const Navbar = () => {
           ) : (
             <Button
               onClick={() => router.push("/login")}
-              sx={{ textDecoration: "none", color: "inherit" }}
+              sx={{
+                bgcolor: "#59AC77",
+                color: "#ffffff",
+                px: 3,
+                "&:hover": {
+                  bgcolor: "#4e9467",
+                  borderColor: "#ffffff",
+                },
+              }}
             >
               Login
             </Button>
