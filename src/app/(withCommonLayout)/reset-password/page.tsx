@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { FieldValues } from "react-hook-form";
@@ -18,7 +19,8 @@ import { deleteCookies } from "@/services/actions/deleteCookies";
 const validationSchema = z.object({
   newPassword: z.string().min(6, "Must be at least 6 characters long"),
 });
-const ResetPassword = () => {
+
+const ResetPasswordComponent = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const token = searchParams.get("token");
@@ -51,6 +53,7 @@ const ResetPassword = () => {
       toast.success("Something Went Wrong, Try Again");
     }
   };
+
   return (
     <Box
       sx={{
@@ -79,6 +82,7 @@ const ResetPassword = () => {
           Reset password
         </Typography>
       </Stack>
+
       <PHForm
         onSubmit={onSubmit}
         defaultValues={{ newPassword: "" }}
@@ -104,4 +108,10 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordComponent />
+    </Suspense>
+  );
+}

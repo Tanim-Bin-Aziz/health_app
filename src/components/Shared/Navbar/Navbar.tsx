@@ -80,9 +80,9 @@ const Navbar = () => {
               color="#ffffff"
               sx={{ cursor: "pointer" }}
             >
-              Consultation
+              Service
             </Typography>
-            <Typography color="#ffffff">Diagnostics</Typography>
+            <Typography color="#ffffff">Treatment</Typography>
             <Typography
               onClick={() => router.push("/doctors")}
               color="#ffffff"

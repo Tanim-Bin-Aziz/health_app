@@ -1,11 +1,7 @@
 import { Box, Button, Container, Typography } from "@mui/material";
 import Image from "next/image";
 import grid from "../../../../../public/assets/svgs/grid.svg";
-import arrow from "../../../../../public/assets/svgs/arrow.svg";
-import doctor1 from "../../../../../public/assets/images/doctor1.png";
-import doctor2 from "../../../../../public/assets/images/doctor2.png";
-import doctor3 from "../../../../../public/assets/images/doctor3.png";
-import stethoscope from "../../../../../public/assets/images/Stetoscope.png";
+import chair from "../../../../../public/assets/chair.png";
 
 const HeroSection = () => {
   return (
@@ -14,6 +10,7 @@ const HeroSection = () => {
         display: "flex",
         direction: "row",
         my: 16,
+        gap: 8,
       }}
     >
       <Box sx={{ flex: 1, position: "relative" }}>
@@ -28,10 +25,10 @@ const HeroSection = () => {
           <Image src={grid} alt="doctor1" />
         </Box>
         <Typography variant="h2" component="h1" fontWeight={600}>
-          Healthier Hearts
+          Welcome to
         </Typography>
         <Typography variant="h2" component="h1" fontWeight={600}>
-          Come From
+          Next Dent
         </Typography>
         <Typography
           variant="h2"
@@ -65,44 +62,11 @@ const HeroSection = () => {
       >
         <Box
           sx={{
-            position: "absolute",
-            left: "200px",
-            top: "-30px",
-          }}
-        >
-          <Image src={arrow} width={100} height={100} alt="arrow" />
-        </Box>
-        <Box
-          sx={{
             display: "flex",
             gap: 2,
           }}
         >
-          <Box mt={4}>
-            <Image src={doctor1} width={240} height={380} alt="doctor1" />
-          </Box>
-          <Box>
-            <Image src={doctor2} width={240} height={350} alt="doctor2" />
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "220px",
-            left: "150px",
-          }}
-        >
-          <Image src={doctor3} width={240} height={240} alt="doctor3" />
-        </Box>
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: "-50px",
-            right: 0,
-            zIndex: "-1",
-          }}
-        >
-          <Image src={stethoscope} width={180} height={180} alt="doctor3" />
+          <Image src={chair} width={600} height={380} alt="chair" />
         </Box>
       </Box>
     </Container>
