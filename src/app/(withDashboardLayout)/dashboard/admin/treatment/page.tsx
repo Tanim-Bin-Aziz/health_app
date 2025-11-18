@@ -267,7 +267,7 @@ export default function TreatmentsAdminPage() {
                 <td style={{ padding: 10, fontWeight: 600, color: "#374151" }}>
                   {t.name}
                 </td>
-                <td style={{ padding: 10 }}>{t.price.toFixed(2)}</td>
+                <td style={{ padding: 10 }}>{t.price}</td>
                 <td style={{ padding: 10 }}>
                   {dayjs(t.createdAt).format("MMM D, YYYY")}
                 </td>
