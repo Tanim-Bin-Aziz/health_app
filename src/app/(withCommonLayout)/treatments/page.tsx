@@ -24,6 +24,7 @@ type Treatment = {
   name: string;
   price: number;
   category: Category;
+  createdAt: string;
 };
 
 export default function TreatmentsPage() {
@@ -34,7 +35,13 @@ export default function TreatmentsPage() {
     fetch("http://localhost:5000/api/v1/treatment")
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setTreatments(d.data);
+        if (d.success) {
+          const sorted = d.data.sort(
+            (a: Treatment, b: Treatment) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+          setTreatments(sorted);
+        }
       })
       .catch(console.error);
   }, []);
@@ -43,12 +50,23 @@ export default function TreatmentsPage() {
     t.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const categoryOrder: Record<string, number> = {};
+  filtered.forEach((t, i) => {
+    if (!(t.category.name in categoryOrder)) {
+      categoryOrder[t.category.name] = i;
+    }
+  });
+
   const grouped: Record<string, Treatment[]> = filtered.reduce((acc, t) => {
     const cat = t.category.name;
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(t);
     return acc;
   }, {} as Record<string, Treatment[]>);
+
+  const sortedCategories = Object.keys(grouped).sort(
+    (a, b) => categoryOrder[a] - categoryOrder[b]
+  );
 
   return (
     <Box
@@ -65,12 +83,17 @@ export default function TreatmentsPage() {
         transition={{ duration: 0.6 }}
         style={{ width: "100%", maxWidth: "900px" }}
       >
-        {/* LOGO */}
         <Box sx={{ textAlign: "center", mb: 2 }}>
           <Image src={logo} width={120} height={80} alt="logo" />
         </Box>
+        <Typography
+          variant="body1"
+          textAlign="center"
+          sx={{ mb: 3, color: "text.secondary" }}
+        >
+          New revised treatment cost from 1st January 2025
+        </Typography>
 
-        {/* HEADING + SEARCH BAR SIDE BY SIDE */}
         <Box
           sx={{
             display: "flex",
@@ -89,23 +112,11 @@ export default function TreatmentsPage() {
             variant="outlined"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            sx={{
-              width: "200px",
-            }}
+            sx={{ width: "200px" }}
           />
         </Box>
 
-        {/* SUBTEXT */}
-        <Typography
-          variant="body1"
-          textAlign="center"
-          sx={{ mb: 3, color: "text.secondary" }}
-        >
-          New revised treatment cost from 1st January 2025
-        </Typography>
-
-        {/* CATEGORY TABLES */}
-        {Object.entries(grouped).map(([category, list]) => (
+        {sortedCategories.map((category) => (
           <Paper
             key={category}
             elevation={6}
@@ -142,12 +153,15 @@ export default function TreatmentsPage() {
                 </TableHead>
 
                 <TableBody>
-                  {list.map((t, index) => (
+                  {grouped[category].map((t, index) => (
                     <motion.tr
                       key={t.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      transition={{
+                        duration: 0.3,
+                        delay: index * 0.05,
+                      }}
                     >
                       <TableCell sx={{ textAlign: "center" }}>
                         {index + 1}
