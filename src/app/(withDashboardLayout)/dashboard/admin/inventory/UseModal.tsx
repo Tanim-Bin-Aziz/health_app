@@ -107,7 +107,7 @@ export default function UseModal({
         }}
       >
         <h2 style={{ fontWeight: 700, marginBottom: "1rem" }}>
-          Use `{selectedItem.name}`
+          Use {selectedItem.name}
         </h2>
         <form
           onSubmit={handleUseItem}

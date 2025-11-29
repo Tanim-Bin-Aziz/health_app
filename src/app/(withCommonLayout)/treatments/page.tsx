@@ -1,10 +1,34 @@
 "use client";
+
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import logo from "../../../../public/nextdent.png";
+import Image from "next/image";
+import {
+  Box,
+  Paper,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  Divider,
+  TableContainer,
+} from "@mui/material";
 
-type Treatment = { id: string; name: string; price: number };
+type Category = { id: string; name: string };
+type Treatment = {
+  id: string;
+  name: string;
+  price: number;
+  category: Category;
+};
 
-export default function TreatmentsList() {
+export default function TreatmentsPage() {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/api/v1/treatment")
@@ -15,16 +39,131 @@ export default function TreatmentsList() {
       .catch(console.error);
   }, []);
 
+  const filtered = treatments.filter((t) =>
+    t.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const grouped: Record<string, Treatment[]> = filtered.reduce((acc, t) => {
+    const cat = t.category.name;
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(t);
+    return acc;
+  }, {} as Record<string, Treatment[]>);
+
   return (
-    <div>
-      <h2>Treatments</h2>
-      <ul>
-        {treatments.map((t) => (
-          <li key={t.id}>
-            {t.name} — {t.price} TK
-          </li>
+    <Box
+      sx={{
+        p: 4,
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        style={{ width: "100%", maxWidth: "900px" }}
+      >
+        {/* LOGO */}
+        <Box sx={{ textAlign: "center", mb: 2 }}>
+          <Image src={logo} width={120} height={80} alt="logo" />
+        </Box>
+
+        {/* HEADING + SEARCH BAR SIDE BY SIDE */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Typography variant="h5" fontWeight="bold">
+            Treatment Cost (In BDT)
+          </Typography>
+
+          <TextField
+            label="Search"
+            size="small"
+            variant="outlined"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{
+              width: "200px",
+            }}
+          />
+        </Box>
+
+        {/* SUBTEXT */}
+        <Typography
+          variant="body1"
+          textAlign="center"
+          sx={{ mb: 3, color: "text.secondary" }}
+        >
+          New revised treatment cost from 1st January 2025
+        </Typography>
+
+        {/* CATEGORY TABLES */}
+        {Object.entries(grouped).map(([category, list]) => (
+          <Paper
+            key={category}
+            elevation={6}
+            sx={{
+              mb: 4,
+              p: 2,
+              borderRadius: 3,
+              backdropFilter: "blur(14px)",
+              background: "rgba(255,255,255,0.55)",
+            }}
+          >
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              sx={{ mb: 2, textTransform: "uppercase" }}
+            >
+              {category}
+            </Typography>
+
+            <Divider sx={{ mb: 2 }} />
+
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                      SL
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Treatment</TableCell>
+                    <TableCell sx={{ fontWeight: "bold", textAlign: "right" }}>
+                      Price (BDT)
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {list.map((t, index) => (
+                    <motion.tr
+                      key={t.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                    >
+                      <TableCell sx={{ textAlign: "center" }}>
+                        {index + 1}
+                      </TableCell>
+                      <TableCell>{t.name}</TableCell>
+                      <TableCell sx={{ textAlign: "right", fontWeight: 600 }}>
+                        {t.price} TK
+                      </TableCell>
+                    </motion.tr>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         ))}
-      </ul>
-    </div>
+      </motion.div>
+    </Box>
   );
 }

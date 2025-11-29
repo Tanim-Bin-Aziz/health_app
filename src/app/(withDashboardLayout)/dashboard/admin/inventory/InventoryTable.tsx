@@ -84,8 +84,20 @@ export default function InventoryTable({
         </button>
       </div>
 
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div
+        style={{
+          marginTop: "1rem",
+          borderRadius: "12px",
+          border: "1px solid #ccc",
+          overflow: "hidden",
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+          }}
+        >
           <thead style={{ backgroundColor: "#f2f2f2" }}>
             <tr>
               <th>#</th>
@@ -123,6 +135,14 @@ export default function InventoryTable({
                 </td>
                 <td style={{ padding: "0.5rem" }}>
                   <button
+                    style={{
+                      padding: "0.3rem 0.6rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: "#4A70A9",
+                      color: "#fff",
+                      cursor: "pointer",
+                    }}
                     onClick={() => {
                       setSelectedItem(item);
                       setDetailsModalOpen(true);
@@ -131,6 +151,14 @@ export default function InventoryTable({
                     View
                   </button>{" "}
                   <button
+                    style={{
+                      padding: "0.3rem 0.6rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: "#DC143C  ",
+                      color: "#fff",
+                      cursor: "pointer",
+                    }}
                     onClick={() => {
                       setSelectedItem(item);
                       setUseModalOpen(true);
@@ -139,6 +167,14 @@ export default function InventoryTable({
                     Use
                   </button>{" "}
                   <button
+                    style={{
+                      padding: "0.3rem 0.6rem",
+                      borderRadius: "6px",
+                      border: "none",
+                      background: "#10b981",
+                      color: "#fff",
+                      cursor: "pointer",
+                    }}
                     onClick={() => {
                       setSelectedItem(item);
                       setRestockModalOpen(true);

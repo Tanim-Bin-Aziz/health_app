@@ -5,23 +5,47 @@ import dayjs from "dayjs";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import { authKey } from "@/contants/authkey";
 
+type Category = {
+  id: string;
+  name: string;
+  createdAt: string;
+};
+
 type Treatment = {
   id: string;
   name: string;
   price: number;
   createdAt: string;
+  category: Category;
 };
 
 export default function TreatmentsAdminPage() {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Treatment | null>(null);
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState<number | "">("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | "">("");
   const [editPrice, setEditPrice] = useState<number | "">("");
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
   const token = getFromLocalStorage(authKey);
 
-  // Fetch all treatments
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/v1/category", {
+        headers: { Authorization: token ?? "" },
+      });
+      const data = await res.json();
+      if (data.success) setCategories(data.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Fetch all treatments (SORTED)
   const fetchTreatments = async (q = "") => {
     try {
       const res = await fetch(
@@ -29,24 +53,30 @@ export default function TreatmentsAdminPage() {
           q ? `?search=${encodeURIComponent(q)}` : ""
         }`,
         {
-          headers: {
-            Authorization: token ?? "",
-          },
+          headers: { Authorization: token ?? "" },
         }
       );
       const data = await res.json();
-      if (data.success) setTreatments(data.data);
+
+      if (data.success) {
+        setTreatments(
+          data.data.sort(
+            (a: Treatment, b: Treatment) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          )
+        );
+      }
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
+    fetchCategories();
     fetchTreatments();
   }, []);
 
   useEffect(() => {
-    // client-side search
     if (search === "") {
       fetchTreatments();
       return;
@@ -58,10 +88,40 @@ export default function TreatmentsAdminPage() {
     setTreatments(filtered);
   }, [search]);
 
+  // Create new category
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryName || !newCategoryName.trim())
+      return alert("Category name required");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/v1/category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ?? "",
+        },
+        body: JSON.stringify({ name: newCategoryName.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewCategoryName("");
+        setIsCategoryModalOpen(false);
+        fetchCategories();
+        alert("Category created");
+      } else {
+        alert(data.message || "Error");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Create new treatment
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newName || newPrice === "") return alert("Name & price required");
+    if (!newName || newPrice === "" || !selectedCategoryId)
+      return alert("Name, price and category are required");
 
     try {
       const res = await fetch("http://localhost:5000/api/v1/treatment", {
@@ -70,12 +130,17 @@ export default function TreatmentsAdminPage() {
           "Content-Type": "application/json",
           Authorization: token ?? "",
         },
-        body: JSON.stringify({ name: newName, price: Number(newPrice) }),
+        body: JSON.stringify({
+          name: newName,
+          price: Number(newPrice),
+          categoryId: selectedCategoryId,
+        }),
       });
       const data = await res.json();
       if (data.success) {
         setNewName("");
         setNewPrice("");
+        setSelectedCategoryId("");
         fetchTreatments();
         alert("Treatment created");
       } else {
@@ -86,13 +151,11 @@ export default function TreatmentsAdminPage() {
     }
   };
 
-  // Open edit modal
   const openEdit = (t: Treatment) => {
     setSelected(t);
     setEditPrice(t.price);
   };
 
-  // Update treatment price
   const handleUpdatePrice = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selected || editPrice === "") return;
@@ -123,7 +186,6 @@ export default function TreatmentsAdminPage() {
     }
   };
 
-  // Delete treatment
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this treatment?")) return;
 
@@ -177,6 +239,34 @@ export default function TreatmentsAdminPage() {
             width: 120,
           }}
         />
+
+        <select
+          value={selectedCategoryId}
+          onChange={(e) => setSelectedCategoryId(e.target.value)}
+          style={{ padding: 8, borderRadius: 8, border: "1px solid #ccc" }}
+        >
+          <option value="">Select category</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        <button
+          type="button"
+          onClick={() => setIsCategoryModalOpen(true)}
+          style={{
+            padding: "8px 12px",
+            borderRadius: 8,
+            background: "#f59e0b",
+            color: "#fff",
+            border: "none",
+          }}
+        >
+          Add Category
+        </button>
+
         <button
           type="submit"
           style={{
@@ -187,7 +277,7 @@ export default function TreatmentsAdminPage() {
             border: "none",
           }}
         >
-          Add
+          Add Treatment
         </button>
       </form>
 
@@ -221,7 +311,10 @@ export default function TreatmentsAdminPage() {
             }}
           />
           <button
-            onClick={() => fetchTreatments()}
+            onClick={() => {
+              fetchTreatments();
+              fetchCategories();
+            }}
             style={{
               padding: "8px 12px",
               borderRadius: 8,
@@ -249,8 +342,9 @@ export default function TreatmentsAdminPage() {
             <tr>
               <th style={{ padding: 10 }}>#</th>
               <th style={{ padding: 10 }}>Name</th>
+              <th style={{ padding: 10 }}>Category</th>
               <th style={{ padding: 10 }}>Price (TK)</th>
-              <th style={{ padding: 10 }}>Created</th>
+              <th style={{ padding: 10 }}>Date</th>
               <th style={{ padding: 10 }}>Actions</th>
             </tr>
           </thead>
@@ -267,6 +361,7 @@ export default function TreatmentsAdminPage() {
                 <td style={{ padding: 10, fontWeight: 600, color: "#374151" }}>
                   {t.name}
                 </td>
+                <td style={{ padding: 10 }}>{t.category?.name ?? "-"}</td>
                 <td style={{ padding: 10 }}>{t.price}</td>
                 <td style={{ padding: 10 }}>
                   {dayjs(t.createdAt).format("MMM D, YYYY")}
@@ -311,7 +406,7 @@ export default function TreatmentsAdminPage() {
             {treatments.length === 0 && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   style={{ padding: 20, textAlign: "center", color: "#6b7280" }}
                 >
                   No treatments found
@@ -379,6 +474,75 @@ export default function TreatmentsAdminPage() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
+                style={{
+                  flex: 1,
+                  padding: 10,
+                  borderRadius: 8,
+                  background: "#e5e7eb",
+                  border: "none",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Category modal */}
+      {isCategoryModalOpen && (
+        <div
+          onClick={() => setIsCategoryModalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.32)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 70,
+          }}
+        >
+          <form
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={handleCreateCategory}
+            style={{
+              background: "#fff",
+              padding: 18,
+              borderRadius: 12,
+              width: 360,
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>Create Category</h3>
+            <input
+              placeholder="Category name"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              style={{
+                width: "100%",
+                padding: 10,
+                borderRadius: 8,
+                border: "1px solid #ccc",
+                marginBottom: 12,
+              }}
+            />
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="submit"
+                style={{
+                  flex: 1,
+                  padding: 10,
+                  borderRadius: 8,
+                  background: "#f59e0b",
+                  color: "#fff",
+                  border: "none",
+                }}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCategoryModalOpen(false)}
                 style={{
                   flex: 1,
                   padding: 10,

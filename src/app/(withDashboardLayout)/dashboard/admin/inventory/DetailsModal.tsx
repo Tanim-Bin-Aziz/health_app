@@ -37,7 +37,7 @@ export default function DetailsModal({ open, setOpen, selectedItem }: any) {
         }}
       >
         <h2 style={{ fontWeight: 700, marginBottom: "1rem" }}>
-          Details `{selectedItem.name}`
+          Details {selectedItem.name}
         </h2>
 
         <p>
