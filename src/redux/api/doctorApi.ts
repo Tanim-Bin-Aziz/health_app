@@ -1,20 +1,34 @@
+// src/redux/api/doctorApi.ts
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
-import { IMeta } from "@/types/common";
 import { IDoctor } from "@/types/doctor";
+import { IMeta } from "@/types/common";
 
 export const doctorApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    // CREATE doctor
     createDoctor: build.mutation({
-      query: (data) => {
-        console.log(data);
-        const formData = new FormData();
+      query: ({
+        doctor,
+        password,
+        file,
+      }: {
+        doctor: any;
+        password: string;
+        file?: File | undefined; // Using undefined for type compatibility
+      }) => {
+        const formData = new FormData(); // 1. Construct the data object (password + doctor details)
 
-        formData.append("password", data.password);
+        const data = {
+          password: password,
+          doctor: doctor,
+        }; // 2. Append to 'data' key, which the backend middleware parses
 
-        Object.keys(data.doctor).forEach((key) => {
-          formData.append(`${key}`, data.doctor[key]);
-        });
+        formData.append("data", JSON.stringify(data)); // 3. Append the file
+
+        if (file) {
+          formData.append("file", file);
+        }
 
         return {
           url: "/doctor",
@@ -23,49 +37,22 @@ export const doctorApi = baseApi.injectEndpoints({
         };
       },
       invalidatesTags: [tagTypes.doctor],
-    }),
+    }), // GET all doctors
 
-    getAllDoctors: build.query({
-      query: (arg: Record<string, any>) => ({
+    getAllDoctors: build.query<{ doctors: IDoctor[]; meta: IMeta }, void>({
+      query: () => ({
         url: "/doctor",
         method: "GET",
-        params: arg,
       }),
-      transformResponse: (response: IDoctor[], meta: IMeta) => {
-        return {
-          doctors: response,
-          meta,
-        };
-      },
       providesTags: [tagTypes.doctor],
-    }),
+    }), // DELETE doctor
 
     deleteDoctor: build.mutation({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `/doctor/soft/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: [tagTypes.doctor],
-    }),
-
-    getDoctor: build.query({
-      query: (id: string | string[] | undefined) => ({
-        url: `/doctor/${id}`,
-        method: "GET",
-      }),
-      providesTags: [tagTypes.doctor],
-    }),
-
-    updateDoctor: build.mutation({
-      query: (data) => {
-        console.log(data);
-        return {
-          url: `/doctor/${data.id}`,
-          method: "PATCH",
-          data: data.body,
-        };
-      },
-      invalidatesTags: [tagTypes.doctor, tagTypes.user],
     }),
   }),
 });
@@ -74,6 +61,4 @@ export const {
   useCreateDoctorMutation,
   useGetAllDoctorsQuery,
   useDeleteDoctorMutation,
-  useGetDoctorQuery,
-  useUpdateDoctorMutation,
 } = doctorApi;

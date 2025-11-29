@@ -4,7 +4,7 @@ export interface Doctor {
   name: string;
   profilePhoto: string;
   contactNumber: string;
-  address: string;
+  address: string | null;
   registrationNumber: string;
   experience: number;
   gender: "MALE" | "FEMALE" | "OTHER";
@@ -16,35 +16,40 @@ export interface Doctor {
   createdAt: string;
   updatedAt: string;
   averageRating: number;
-  review: any[]; // You may want to specify the structure of the review object if known
+  review: any[];
   doctorSpecialties: DoctorSpecialty[];
 }
 
 export interface DoctorSpecialty {
   specialtiesId: string;
   doctorId: string;
-  specialties: any; // You may want to specify the structure of the specialties object if known
+  specialties: {
+    id: string;
+    name: string;
+    isDeleted: boolean;
+  };
 }
 
 export interface IDoctor {
-  id: string;
+  email: ReactNode;
+  id?: string;
   name: string;
   profilePhoto: string;
   contactNumber: string;
   address: string;
   registrationNumber: string;
-  experience: number | undefined;
+  experience: number;
   gender: "MALE" | "FEMALE";
-  apointmentFee: number | undefined;
+  apointmentFee: number;
   qualification: string;
   currentWorkingPlace: string;
   designation: string;
-  specialties?: ISpecialties[];
+  specialties: ISpecialties[];
 }
 
 export interface ISpecialties {
   specialtiesId: string;
-  isDeleted?: null;
+  isDeleted?: boolean | null;
 }
 
 export interface IDoctorFormData {

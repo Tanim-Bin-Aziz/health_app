@@ -1,47 +1,47 @@
+"use client";
+
 import {
   FieldValues,
   FormProvider,
   SubmitHandler,
   useForm,
+  UseFormProps,
 } from "react-hook-form";
+import React from "react";
 
-type TFormConfig = {
-  resolver?: any;
-  defaultValues?: Record<string, any>;
+type TFormConfig<T extends FieldValues> = {
+  resolver?: UseFormProps<T>["resolver"];
+  defaultValues?: UseFormProps<T>["defaultValues"];
 };
 
-type TFormProps = {
+type PHFormProps<T extends FieldValues> = {
   children: React.ReactNode;
-  onSubmit: SubmitHandler<FieldValues>;
-} & TFormConfig;
+  onSubmit: SubmitHandler<T>;
+} & TFormConfig<T>;
 
-const PHForm = ({
+const PHForm = <T extends FieldValues>({
   children,
   onSubmit,
   resolver,
   defaultValues,
-}: TFormProps) => {
-  const formConfig: TFormConfig = {};
+}: PHFormProps<T>) => {
+  const methods = useForm<T>({
+    resolver,
+    defaultValues,
+  });
 
-  if (resolver) {
-    formConfig["resolver"] = resolver;
-  }
+  const { handleSubmit, reset, getValues } = methods;
 
-  if (defaultValues) {
-    formConfig["defaultValues"] = defaultValues;
-  }
+  const handleFormSubmit: SubmitHandler<T> = async (data) => {
+    await onSubmit(data);
 
-  const methods = useForm(formConfig);
-  const { handleSubmit, reset } = methods;
-
-  const submit: SubmitHandler<FieldValues> = (data) => {
-    onSubmit(data);
-    reset();
+    // ⭐ FIX: reset using current values (TS safe)
+    reset(getValues());
   };
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(submit)}>{children}</form>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>{children}</form>
     </FormProvider>
   );
 };

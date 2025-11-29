@@ -1,7 +1,7 @@
 import { SxProps, TextField } from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 
-type TInputProps = {
+export type TInputProps = {
   name: string;
   label?: string;
   type?: string;
@@ -11,6 +11,7 @@ type TInputProps = {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const PHInput = ({
@@ -21,25 +22,40 @@ const PHInput = ({
   fullWidth,
   sx,
   required,
+  disabled,
+  onChange,
 }: TInputProps) => {
   const { control } = useFormContext();
+
   return (
     <Controller
-      control={control}
       name={name}
+      control={control}
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
-          sx={{ ...sx }}
-          label={label}
           type={type}
-          variant="outlined"
-          size={size}
+          label={label}
           fullWidth={fullWidth}
-          placeholder={label}
+          size={size}
           required={required}
+          disabled={disabled}
+          placeholder={label}
           error={!!error?.message}
           helperText={error?.message}
+          sx={sx}
+          onChange={(e) => {
+            if (type === "file") {
+              const file = e.target.files?.[0];
+              field.onChange(file); // ⭐ file object sent to RHF
+            } else {
+              field.onChange(e.target.value);
+            }
+
+            onChange?.(e);
+          }}
+          value={type === "file" ? undefined : field.value ?? ""}
+          inputProps={type === "file" ? { accept: "image/*" } : {}}
         />
       )}
     />

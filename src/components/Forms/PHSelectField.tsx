@@ -1,53 +1,53 @@
 import { MenuItem, SxProps, TextField } from "@mui/material";
-import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, FieldPath } from "react-hook-form";
 
-interface ITextField {
-  name: string;
-  size?: "small" | "medium";
-  placeholder?: string;
+export interface ISelectItem {
+  label: string;
+  value: string | number;
+}
+
+interface ISelectProps<T extends Record<string, any>> {
+  name: FieldPath<T>;
   label?: string;
+  items: ISelectItem[];
+  size?: "small" | "medium";
   required?: boolean;
   fullWidth?: boolean;
   sx?: SxProps;
-  items: string[];
 }
 
-const PHSelectField = ({
-  items,
+const PHSelectField = <T extends Record<string, any>>({
   name,
   label,
+  items,
   size = "small",
-  required,
+  required = false,
   fullWidth = true,
   sx,
-}: ITextField) => {
-  const { control, formState } = useFormContext();
-  const isError = formState.errors[name] !== undefined;
+}: ISelectProps<T>) => {
+  const { control } = useFormContext<T>();
 
   return (
     <Controller
-      control={control}
       name={name}
-      defaultValue=""
-      render={({ field }) => (
+      control={control}
+      render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
           select
           label={label}
-          value={field.value ?? ""}
           required={required}
           fullWidth={fullWidth}
           size={size}
-          error={isError}
-          helperText={
-            isError ? (formState.errors[name]?.message as string) : ""
-          }
-          sx={{ ...sx }}
+          error={!!error}
+          helperText={error?.message ?? ""}
+          sx={sx}
+          value={field.value ?? ""}
+          onChange={(e) => field.onChange(e.target.value)}
         >
           {items.map((item) => (
-            <MenuItem key={item} value={item}>
-              {item}
+            <MenuItem key={item.value} value={item.value}>
+              {item.label}
             </MenuItem>
           ))}
         </TextField>
