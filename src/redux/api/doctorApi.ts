@@ -1,3 +1,4 @@
+// src/redux/api/doctorApi.ts
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
 import { IDoctor } from "@/types/doctor";
@@ -36,14 +37,6 @@ export const doctorApi = baseApi.injectEndpoints({
       },
       invalidatesTags: [tagTypes.doctor],
     }),
-    updateDoctor: build.mutation({
-      query: ({ id, data }: { id: string; data: any }) => ({
-        url: `/doctor/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
-      invalidatesTags: [tagTypes.doctor],
-    }),
 
     getAllDoctors: build.query<{ doctors: IDoctor[]; meta: IMeta }, void>({
       query: () => ({
@@ -61,6 +54,15 @@ export const doctorApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.doctor],
     }),
 
+    updateDoctor: build.mutation({
+      query: ({ id, data }: { id: string; data: any }) => ({
+        url: `/doctor/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.doctor],
+    }),
+
     deleteDoctor: build.mutation({
       query: (id: string) => ({
         url: `/doctor/soft/${id}`,
@@ -75,5 +77,6 @@ export const {
   useCreateDoctorMutation,
   useGetAllDoctorsQuery,
   useGetDoctorQuery,
+  useUpdateDoctorMutation,
   useDeleteDoctorMutation,
 } = doctorApi;
