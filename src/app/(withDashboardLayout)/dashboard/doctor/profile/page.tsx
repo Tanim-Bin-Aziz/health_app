@@ -11,7 +11,6 @@ import React, { useState } from "react";
 import DoctorInformation from "./components/DoctorInformations";
 import AutoFileUploader from "@/components/Forms/AutoFileUploader";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import ProfileUpdateModal from "./components/ProfileUpdateModal";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 const Profile = () => {
@@ -35,11 +34,6 @@ const Profile = () => {
 
   return (
     <>
-      <ProfileUpdateModal
-        open={isModalOpen}
-        setOpen={setIsModalOpen}
-        id={data?.id}
-      />
       <Container sx={{ mt: 4 }}>
         <Grid container spacing={4}>
           <Grid xs={12} md={4}>

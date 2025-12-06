@@ -25,7 +25,7 @@ export interface Doctor {
 export interface DoctorSpecialty {
   specialtiesId: string;
   doctorId: string;
-  specialties: {
+  specialties?: {
     title: any;
     id: string;
     name: string;
@@ -34,6 +34,7 @@ export interface DoctorSpecialty {
 }
 
 export interface IDoctor {
+  doctorSpecialties: any;
   email: ReactNode;
   id?: string;
   name: string;
