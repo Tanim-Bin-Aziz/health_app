@@ -11,7 +11,9 @@ export type TInputProps = {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void; // ✅ FIXED
 };
 
 const PHInput = ({
@@ -46,13 +48,14 @@ const PHInput = ({
           sx={sx}
           onChange={(e) => {
             if (type === "file") {
-              const file = e.target.files?.[0];
-              field.onChange(file); // ⭐ file object sent to RHF
+              const target = e.target as HTMLInputElement;
+              const file = target.files?.[0] ?? null;
+              field.onChange(file);
             } else {
               field.onChange(e.target.value);
             }
 
-            onChange?.(e);
+            onChange?.(e); // Works safely now
           }}
           value={type === "file" ? undefined : field.value ?? ""}
           inputProps={type === "file" ? { accept: "image/*" } : {}}
