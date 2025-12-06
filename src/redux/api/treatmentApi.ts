@@ -1,4 +1,3 @@
-// redux/api/treatmentApi.ts
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
 

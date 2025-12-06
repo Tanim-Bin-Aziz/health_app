@@ -1,4 +1,3 @@
-// src/redux/api/doctorApi.ts
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
 import { IDoctor } from "@/types/doctor";
@@ -6,7 +5,6 @@ import { IMeta } from "@/types/common";
 
 export const doctorApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    // CREATE doctor
     createDoctor: build.mutation({
       query: ({
         doctor,
@@ -15,16 +13,16 @@ export const doctorApi = baseApi.injectEndpoints({
       }: {
         doctor: any;
         password: string;
-        file?: File | undefined; // Using undefined for type compatibility
+        file?: File | undefined;
       }) => {
-        const formData = new FormData(); // 1. Construct the data object (password + doctor details)
+        const formData = new FormData();
 
         const data = {
           password: password,
           doctor: doctor,
-        }; // 2. Append to 'data' key, which the backend middleware parses
+        };
 
-        formData.append("data", JSON.stringify(data)); // 3. Append the file
+        formData.append("data", JSON.stringify(data));
 
         if (file) {
           formData.append("file", file);
@@ -37,7 +35,7 @@ export const doctorApi = baseApi.injectEndpoints({
         };
       },
       invalidatesTags: [tagTypes.doctor],
-    }), // GET all doctors
+    }),
 
     getAllDoctors: build.query<{ doctors: IDoctor[]; meta: IMeta }, void>({
       query: () => ({
@@ -45,7 +43,15 @@ export const doctorApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: [tagTypes.doctor],
-    }), // DELETE doctor
+    }),
+
+    getDoctor: build.query<IDoctor, string>({
+      query: (id) => ({
+        url: `/doctor/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.doctor],
+    }),
 
     deleteDoctor: build.mutation({
       query: (id: string) => ({
@@ -60,5 +66,6 @@ export const doctorApi = baseApi.injectEndpoints({
 export const {
   useCreateDoctorMutation,
   useGetAllDoctorsQuery,
+  useGetDoctorQuery,
   useDeleteDoctorMutation,
 } = doctorApi;

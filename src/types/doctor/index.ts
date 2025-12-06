@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Doctor {
   id: string;
   email: string;
@@ -7,7 +9,7 @@ export interface Doctor {
   address: string | null;
   registrationNumber: string;
   experience: number;
-  gender: "MALE" | "FEMALE" | "OTHER";
+  gender: "MALE" | "FEMALE";
   apointmentFee: number;
   qualification: string;
   currentWorkingPlace: string;
@@ -24,6 +26,7 @@ export interface DoctorSpecialty {
   specialtiesId: string;
   doctorId: string;
   specialties: {
+    title: any;
     id: string;
     name: string;
     isDeleted: boolean;

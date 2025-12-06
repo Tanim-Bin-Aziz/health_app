@@ -1,4 +1,3 @@
-// redux/api/inventoryApi.ts
 import { baseApi } from "./baseApi";
 import { tagTypes } from "../tag-types";
 
