@@ -36,6 +36,14 @@ export const doctorApi = baseApi.injectEndpoints({
       },
       invalidatesTags: [tagTypes.doctor],
     }),
+    updateDoctor: build.mutation({
+      query: ({ id, data }: { id: string; data: any }) => ({
+        url: `/doctor/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.doctor],
+    }),
 
     getAllDoctors: build.query<{ doctors: IDoctor[]; meta: IMeta }, void>({
       query: () => ({
