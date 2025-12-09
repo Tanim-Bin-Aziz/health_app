@@ -13,7 +13,7 @@ export type TInputProps = {
   disabled?: boolean;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void; // ✅ FIXED
+  ) => void;
 };
 
 const PHInput = ({
@@ -47,15 +47,16 @@ const PHInput = ({
           helperText={error?.message}
           sx={sx}
           onChange={(e) => {
+            const target = e.target as HTMLInputElement;
+
             if (type === "file") {
-              const target = e.target as HTMLInputElement;
               const file = target.files?.[0] ?? null;
               field.onChange(file);
             } else {
-              field.onChange(e.target.value);
+              field.onChange(target.value);
             }
 
-            onChange?.(e); // Works safely now
+            onChange?.(e as React.ChangeEvent<HTMLInputElement>);
           }}
           value={type === "file" ? undefined : field.value ?? ""}
           inputProps={type === "file" ? { accept: "image/*" } : {}}
