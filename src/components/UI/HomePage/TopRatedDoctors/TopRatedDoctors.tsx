@@ -18,7 +18,7 @@ type Doctor = {
   qualification: string;
   designation: string;
   address: string;
-  profilePhoto?: string | null; // optional, since API may send "" or null
+  profilePhoto?: string | null;
 };
 
 const TopRatedDoctors = async () => {
@@ -43,13 +43,10 @@ const TopRatedDoctors = async () => {
       {/* Section Header */}
       <Box sx={{ textAlign: "center" }}>
         <Typography variant="h4" component="h1" fontWeight={700}>
-          Our Top Rated Doctors
+          Meet Our Expert Doctors
         </Typography>
         <Typography component="p" fontSize={18} fontWeight={400} sx={{ mt: 2 }}>
-          Access to expert physicians and surgeons, advanced technologies
-        </Typography>
-        <Typography component="p" fontSize={18} fontWeight={400}>
-          and top-quality surgery facilities right here.
+          Highly qualified specialists dedicated to your dental health
         </Typography>
       </Box>
 

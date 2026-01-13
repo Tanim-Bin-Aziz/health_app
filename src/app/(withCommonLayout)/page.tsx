@@ -9,7 +9,6 @@ const HomePage = () => {
   return (
     <>
       <HeroSection />
-      <Specialist />
       <TopRatedDoctors />
       <WhyUs />
       <HowItWorks />

@@ -51,11 +51,40 @@ const Navbar = () => {
   const profilePicUrl = () => {
     if (!userInfo?.profilePic) return undefined;
     if (userInfo.profilePic.startsWith("http")) return userInfo.profilePic;
-    return `/${userInfo.profilePic}`; // relative to public folder
+    return `/${userInfo.profilePic}`;
+  };
+
+  const navItemStyle = {
+    color: "#fff",
+    cursor: "pointer",
+    position: "relative",
+    fontWeight: 500,
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      left: 0,
+      bottom: -5,
+      width: "0%",
+      height: "2px",
+      backgroundColor: "#ffffff",
+      transition: "0.3s",
+    },
+    "&:hover::after": {
+      width: "100%",
+    },
   };
 
   return (
-    <Box sx={{ bgcolor: "#59AC77" }}>
+    <Box
+      sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1300,
+        backdropFilter: "blur(12px)",
+        background: "#BB8ED0",
+        boxShadow: "0 4px 30px rgba(0,0,0,0.1)",
+      }}
+    >
       <Container>
         <Stack
           py={2}
@@ -68,52 +97,59 @@ const Navbar = () => {
             variant="h4"
             onClick={() => router.push("/")}
             fontWeight={600}
-            sx={{ color: "#ffffff", textDecoration: "none", cursor: "pointer" }}
+            sx={{
+              color: "#ffffff",
+              cursor: "pointer",
+              textShadow: "0 2px 10px rgba(255,255,255,0.4)",
+            }}
           >
             Next Dent
           </Typography>
 
           {/* Nav Links */}
-          <Stack direction="row" justifyContent="space-between" gap={4}>
+          <Stack direction="row" gap={4}>
             <Typography
+              sx={navItemStyle}
               onClick={() => router.push("/consultation")}
-              color="#ffffff"
-              sx={{ cursor: "pointer" }}
             >
               Appointment
             </Typography>
             <Typography
+              sx={navItemStyle}
               onClick={() => router.push("/treatments")}
-              color="#ffffff"
-              sx={{ cursor: "pointer" }}
             >
               Treatment
             </Typography>
             <Typography
+              sx={navItemStyle}
               onClick={() => router.push("/doctors")}
-              color="#ffffff"
-              sx={{ cursor: "pointer" }}
             >
               Doctors
             </Typography>
+
             {userInfo?.userId && (
               <Typography
+                sx={navItemStyle}
                 onClick={() => router.push("/dashboard")}
-                color="#ffffff"
-                sx={{ cursor: "pointer" }}
               >
                 Dashboard
               </Typography>
             )}
           </Stack>
 
+          {/* Profile / Login */}
           {userInfo?.userId ? (
             <Box>
               <IconButton onClick={handleMenuOpen} sx={{ p: 0 }}>
                 <Avatar
                   src={profilePicUrl()}
                   alt="Profile"
-                  sx={{ width: 36, height: 36, bgcolor: "secondary.main" }}
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    bgcolor: "secondary.main",
+                    border: "2px solid rgba(255,255,255,0.6)",
+                  }}
                 >
                   {!profilePicUrl() && getInitials(userInfo.name)}
                 </Avatar>
@@ -129,6 +165,8 @@ const Navbar = () => {
                   sx: {
                     mt: 1.5,
                     minWidth: 160,
+                    backdropFilter: "blur(10px)",
+                    background: "rgba(255,255,255,0.85)",
                     "&:before": {
                       content: '""',
                       display: "block",
@@ -137,7 +175,7 @@ const Navbar = () => {
                       right: 20,
                       width: 10,
                       height: 10,
-                      bgcolor: "background.paper",
+                      bgcolor: "rgba(255,255,255,0.85)",
                       transform: "translateY(-50%) rotate(45deg)",
                       zIndex: 0,
                     },
@@ -176,12 +214,18 @@ const Navbar = () => {
             <Button
               onClick={() => router.push("/login")}
               sx={{
-                bgcolor: "#59AC77",
                 color: "#ffffff",
                 px: 3,
+                borderRadius: "999px",
+                border: "1px solid rgba(255,255,255,0.6)",
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(10px)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+                transition: "0.3s ease",
                 "&:hover": {
-                  bgcolor: "#4e9467",
-                  borderColor: "#ffffff",
+                  background: "rgba(255,255,255,0.28)",
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
                 },
               }}
             >

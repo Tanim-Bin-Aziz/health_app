@@ -2,6 +2,7 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import Image from "next/image";
 import grid from "../../../../../public/assets/svgs/grid.svg";
 import chair from "../../../../../public/assets/chair.png";
+import { CalendarMonth } from "@mui/icons-material";
 
 const HeroSection = () => {
   return (
@@ -34,7 +35,7 @@ const HeroSection = () => {
           variant="h2"
           component="h1"
           fontWeight={600}
-          color="#59AC77"
+          color="#BB8ED0"
         >
           Preventive Care
         </Typography>
@@ -46,17 +47,41 @@ const HeroSection = () => {
         </Typography>
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
+            size="large"
             sx={{
-              bgcolor: "#59AC77",
-              color: "white",
+              color: "#fff",
+              background: "#BB8ED0",
+              px: 3,
+              borderRadius: "999px",
+              boxShadow: "0 10px 25px rgba(187, 142, 208, 0.45)",
+              transition: "0.3s ease",
               "&:hover": {
-                bgcolor: "#4e9467",
+                background: "#a979c4",
+                boxShadow: "0 14px 35px rgba(187, 142, 208, 0.6)",
+                transform: "translateY(-2px)",
               },
             }}
           >
-            Make appointment
+            <CalendarMonth sx={{ fontSize: 20, mr: 1 }} />
+            Book Appointment
           </Button>
-          <Button variant="outlined">Contact us</Button>
+
+          <Button
+            variant="outlined"
+            sx={{
+              color: "#BB8ED0",
+              borderColor: "#BB8ED0",
+              px: 3,
+              borderRadius: "999px",
+              transition: "0.3s ease",
+              "&:hover": {
+                background: "rgba(187, 142, 208, 0.12)",
+                borderColor: "#a979c4",
+              },
+            }}
+          >
+            Contact us
+          </Button>
         </Box>
       </Box>
 
