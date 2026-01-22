@@ -1,176 +1,87 @@
 "use client";
 
+import { Box, Button, Container, Typography } from "@mui/material";
 import { useState } from "react";
-import {
-  Box,
-  Grid,
-  Card,
-  Typography,
-  Button,
-  Avatar,
-  Divider,
-  TextField,
-  IconButton,
-} from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import { Dayjs } from "dayjs";
 
-/* ================================
-   DENTAL BOOKING – MUI INDUSTRY UI
-   Inspired by Calendly / Doctolib
-   ================================ */
+import CalendarSection from "./CalendarSection";
+import DoctorSelect, { Doctor } from "./DoctorSelect";
+import SlotSelector from "./SlotSelector";
+import PatientForm from "./PatientForm";
+import BookingSuccessModal from "./BookingSuccessModal";
 
-const doctors = [
-  {
-    id: 1,
-    name: "Dr. Ayesha Rahman",
-    designation: "BDS, FCPS (Dentistry)",
-    availableDays: [0, 1, 2, 4],
-  },
-  {
-    id: 2,
-    name: "Dr. Tanvir Hasan",
-    designation: "BDS, DDS",
-    availableDays: [0, 2, 3, 5],
-  },
-];
+const AppointmentPage = () => {
+  const [date, setDate] = useState<Dayjs | null>(null);
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [slot, setSlot] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [success, setSuccess] = useState(false);
 
-const slots = [
-  "4:00 PM",
-  "5:00 PM",
-  "6:00 PM",
-  "7:00 PM",
-  "8:00 PM",
-  "9:00 PM",
-];
+  const canBook = date && doctor && slot && name.trim() && phone.trim();
 
-export default function DentalBookingMUI() {
-  const today = new Date();
-  const [selectedDoctor, setSelectedDoctor] = useState(doctors[0]);
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+  const handleBooking = async () => {
+    console.log({
+      date: date?.format("YYYY-MM-DD"),
+      doctorId: doctor?.id,
+      slot,
+      name,
+      phone,
+    });
 
-  const formattedDate = selectedDate.toDateString();
+    setSuccess(true);
+  };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f6f8fb", p: 4 }}>
-      <Card
-        sx={{ maxWidth: 1200, mx: "auto", borderRadius: 4, overflow: "hidden" }}
-      >
-        <Grid container>
-          {/* LEFT PANEL */}
-          <Grid item xs={12} md={4} sx={{ bgcolor: "#ffffff", p: 4 }}>
-            <Typography variant="h6" fontWeight={700} mb={3}>
-              NextDent
-            </Typography>
+    <Container sx={{ py: 6 }}>
+      <Typography variant="h4" fontWeight={800} mb={4}>
+        Book Appointment
+      </Typography>
 
-            {doctors.map((doc) => (
-              <Card
-                key={doc.id}
-                onClick={() => {
-                  setSelectedDoctor(doc);
-                  setSelectedSlot(null);
-                }}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  cursor: "pointer",
-                  borderRadius: 3,
-                  border:
-                    selectedDoctor.id === doc.id
-                      ? "2px solid #0f766e"
-                      : "1px solid #e5e7eb",
-                }}
-              >
-                <Box display="flex" gap={2} alignItems="center">
-                  <Avatar />
-                  <Box>
-                    <Typography fontWeight={600}>{doc.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {doc.designation}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Card>
-            ))}
+      <Box display="grid" gridTemplateColumns="1fr 2fr" gap={4}>
+        <CalendarSection
+          selectedDate={date}
+          onChange={(d) => {
+            setDate(d);
+            setDoctor(null);
+            setSlot(null);
+          }}
+        />
 
-            <Divider sx={{ my: 3 }} />
-            <Typography variant="body2" color="text.secondary">
-              Step 2: Select date & time
-            </Typography>
-          </Grid>
+        <Box display="flex" flexDirection="column" gap={4}>
+          <DoctorSelect
+            selectedDate={!!date}
+            selectedDoctor={doctor}
+            onSelect={setDoctor}
+          />
 
-          {/* RIGHT PANEL */}
-          <Grid item xs={12} md={8} sx={{ p: 4 }}>
-            <Typography variant="h5" fontWeight={700} mb={3}>
-              Select Date & Time
-            </Typography>
+          <SlotSelector
+            enabled={!!doctor}
+            selectedSlot={slot}
+            onSelect={setSlot}
+          />
 
-            {/* DATE PICKER (SIMPLIFIED) */}
-            <Box display="flex" alignItems="center" gap={2} mb={4}>
-              <IconButton>
-                <ArrowBackIos fontSize="small" />
-              </IconButton>
-              <Typography fontWeight={600}>{formattedDate}</Typography>
-              <IconButton>
-                <ArrowForwardIos fontSize="small" />
-              </IconButton>
-            </Box>
+          <PatientForm
+            name={name}
+            phone={phone}
+            setName={setName}
+            setPhone={setPhone}
+          />
 
-            {/* SLOTS */}
-            <Grid container spacing={2}>
-              {slots.map((slot) => (
-                <Grid item xs={6} sm={4} key={slot}>
-                  <Button
-                    fullWidth
-                    variant={selectedSlot === slot ? "contained" : "outlined"}
-                    color="success"
-                    onClick={() => setSelectedSlot(slot)}
-                    sx={{ py: 1.5, borderRadius: 3 }}
-                  >
-                    {slot}
-                  </Button>
-                </Grid>
-              ))}
-            </Grid>
+          <Button
+            size="large"
+            variant="contained"
+            disabled={!canBook}
+            onClick={handleBooking}
+          >
+            Confirm Appointment
+          </Button>
+        </Box>
+      </Box>
 
-            {/* CONFIRM */}
-            {selectedSlot && (
-              <Card sx={{ mt: 4, p: 3, borderRadius: 3 }}>
-                <Typography fontWeight={600} mb={1}>
-                  Confirm Appointment
-                </Typography>
-                <Typography variant="body2">
-                  Doctor: {selectedDoctor.name}
-                </Typography>
-                <Typography variant="body2">Date: {formattedDate}</Typography>
-                <Typography variant="body2">Time: {selectedSlot}</Typography>
-
-                <TextField
-                  fullWidth
-                  label="Patient Name"
-                  size="small"
-                  sx={{ mt: 2 }}
-                />
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  size="small"
-                  sx={{ mt: 2 }}
-                />
-
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="success"
-                  sx={{ mt: 3, py: 1.5, borderRadius: 3 }}
-                >
-                  Book Appointment
-                </Button>
-              </Card>
-            )}
-          </Grid>
-        </Grid>
-      </Card>
-    </Box>
+      <BookingSuccessModal open={success} onClose={() => setSuccess(false)} />
+    </Container>
   );
-}
+};
+
+export default AppointmentPage;
