@@ -35,7 +35,7 @@ const HeroSection = () => {
           variant="h2"
           component="h1"
           fontWeight={600}
-          color="#BB8ED0"
+          color="#35c4b2"
         >
           Preventive Care
         </Typography>
@@ -47,17 +47,18 @@ const HeroSection = () => {
         </Typography>
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
+            href="/appointments"
             size="large"
             sx={{
               color: "#fff",
-              background: "#BB8ED0",
+              background: "#35c4b2",
               px: 3,
               borderRadius: "999px",
               boxShadow: "0 10px 25px rgba(187, 142, 208, 0.45)",
               transition: "0.3s ease",
               "&:hover": {
-                background: "#a979c4",
-                boxShadow: "0 14px 35px rgba(187, 142, 208, 0.6)",
+                background: "#35c4b2",
+                boxShadow: "0 12px 30px rgb(53, 196, 177)",
                 transform: "translateY(-2px)",
               },
             }}
@@ -69,14 +70,14 @@ const HeroSection = () => {
           <Button
             variant="outlined"
             sx={{
-              color: "#BB8ED0",
-              borderColor: "#BB8ED0",
+              color: "#35c4b2",
+              borderColor: "#35c4b2",
               px: 3,
               borderRadius: "999px",
               transition: "0.3s ease",
               "&:hover": {
                 background: "rgba(187, 142, 208, 0.12)",
-                borderColor: "#a979c4",
+                borderColor: "#35c4b2",
               },
             }}
           >

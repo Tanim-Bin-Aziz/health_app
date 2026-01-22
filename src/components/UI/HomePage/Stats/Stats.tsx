@@ -69,8 +69,8 @@ const Stats = () => {
                 {/* Icon */}
                 <Box
                   sx={{
-                    color: "#00e5ff",
-                    fontSize: 34,
+                    color: "#BB8ED0",
+                    fontSize: 40,
                     display: "flex",
                     alignItems: "center",
                   }}
@@ -83,15 +83,12 @@ const Stats = () => {
                   <Typography
                     variant="h6"
                     fontWeight={600}
-                    sx={{ color: "#fff", lineHeight: 1 }}
+                    sx={{ color: "black", lineHeight: 1 }}
                   >
                     {item.value}
                   </Typography>
 
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "rgba(255,255,255,0.75)" }}
-                  >
+                  <Typography variant="caption" sx={{ color: "black" }}>
                     {item.label}
                   </Typography>
                 </Box>

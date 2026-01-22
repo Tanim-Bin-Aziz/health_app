@@ -81,7 +81,7 @@ const Navbar = () => {
         top: 0,
         zIndex: 1300,
         backdropFilter: "blur(12px)",
-        background: "#BB8ED0",
+        background: "#35c4b2",
         boxShadow: "0 4px 30px rgba(0,0,0,0.1)",
       }}
     >
@@ -110,7 +110,7 @@ const Navbar = () => {
           <Stack direction="row" gap={4}>
             <Typography
               sx={navItemStyle}
-              onClick={() => router.push("/consultation")}
+              onClick={() => router.push("/appointments")}
             >
               Appointment
             </Typography>

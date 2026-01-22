@@ -22,7 +22,7 @@ const TopRatedDoctors = async () => {
     "http://localhost:5000/api/v1/doctor?page=1&limit=3",
     {
       cache: "no-store",
-    }
+    },
   );
 
   const { data: doctors }: { data: Doctor[] } = await res.json();
@@ -90,7 +90,7 @@ const TopRatedDoctors = async () => {
                       {doctor.name}
                     </Typography>
 
-                    <Typography color="primary" fontWeight={600}>
+                    <Typography color="#35c4b2" fontWeight={600}>
                       {doctor.designation}
                     </Typography>
 
@@ -114,7 +114,7 @@ const TopRatedDoctors = async () => {
                         <Typography
                           fontWeight={700}
                           variant="body2"
-                          color="primary"
+                          color="#35c4b2"
                         >
                           {experience}+
                         </Typography>
@@ -136,7 +136,7 @@ const TopRatedDoctors = async () => {
                         <Typography
                           fontWeight={700}
                           variant="body2"
-                          color="secondary"
+                          color="#35c4b2"
                         >
                           1K+
                         </Typography>
@@ -164,7 +164,7 @@ const TopRatedDoctors = async () => {
                           alignItems: "center",
                           gap: 0.5,
                           color: "#fff",
-                          background: "#BB8ED0",
+                          background: "#35c4b2",
                           px: 1.5,
                           py: 0.5,
                           borderRadius: 2,
@@ -173,7 +173,7 @@ const TopRatedDoctors = async () => {
                           boxShadow: "0 5px 15px rgba(187, 142, 208, 0.35)",
                           transition: "0.3s ease",
                           "&:hover": {
-                            background: "#a979c4",
+                            background: "#35c4b2",
                             boxShadow: "0 7px 20px rgba(187, 142, 208, 0.5)",
                             transform: "translateY(-1px)",
                           },
@@ -187,11 +187,16 @@ const TopRatedDoctors = async () => {
                         size="small"
                         variant="outlined"
                         sx={{
+                          color: "#35c4b2",
+                          borderColor: "#35c4b2",
                           px: 1.5,
                           py: 0.5,
                           borderRadius: 2,
                           textTransform: "none",
                           fontWeight: 600,
+                          "&:hover": {
+                            borderColor: "#35c4b2",
+                          },
                         }}
                       >
                         Profile
