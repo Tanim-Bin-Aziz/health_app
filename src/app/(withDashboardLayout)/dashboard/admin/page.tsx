@@ -1,9 +1,9 @@
-const AdminPage = () => {
+import DashboardCards from "./DashboardCards";
+
+export default function Page() {
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
+    <div style={{ padding: 24 }}>
+      <DashboardCards />
     </div>
   );
-};
-
-export default AdminPage;
+}
