@@ -130,7 +130,7 @@ const Navbar = () => {
             {userInfo?.userId && (
               <Typography
                 sx={navItemStyle}
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push("/dashboard/admin")}
               >
                 Dashboard
               </Typography>
@@ -185,7 +185,7 @@ const Navbar = () => {
                 <MenuItem
                   onClick={() => {
                     handleMenuClose();
-                    router.push("/dashboard");
+                    router.push("/dashboard/admin");
                   }}
                 >
                   Dashboard
